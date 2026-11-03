@@ -88,7 +88,33 @@ Game::Game()
 	
 	
 }
-
+void Game::RevisarMeta()
+{
+	if (puntuacion >= goal)
+	{
+		level++;
+		if (!(loadLevel((to_string(level) + ".txt"))))
+		{
+			ganaste = true;
+			exit = true;
+		}
+		else
+		{
+			puntuacion = 0;
+			TimeBalloons = 0;
+			bow->setArrows(arrows);
+			infoBar->PuntosProsimoNivel(to_string(goal), getTexture(DIGITS));
+			for (int i = 0; i < balloon.size();i++)
+			{
+				Eliglob(balloon, i);
+			}
+			for (int i = 0; i < arrow.size();i++)
+			{
+				Eliarrow(arrow, i);
+			}
+		}
+	}
+}
 Game::~Game()
 {
 	
@@ -220,7 +246,9 @@ Game::update()
 	{
 		SDL_Delay(FRAME_PERIOD - FrameTime);
 	}
+	RevisarMeta(); 
 }
+
 
 void Game::run()
 {
@@ -229,30 +257,7 @@ void Game::run()
 		//double tiempoactual = SDL_GetTicks();
 	   // deltatime = (tiempoactual - ultip) / 1000.0f;
 		//ultip = tiempoactual; 
-		if (puntuacion >= goal)
-		{
-			level++;
-			if (!(loadLevel((to_string(level) + ".txt"))))
-			{
-				ganaste = true;
-				exit = true;
-			}
-			else
-			{
-				puntuacion = 0;
-				TimeBalloons = 0;
-				bow->setArrows(arrows);
-				infoBar->PuntosProsimoNivel(to_string(goal), getTexture(DIGITS));
-				for (int i = 0; i < balloon.size();i++)
-				{
-					Eliglob(balloon, i);
-				}
-				for (int i = 0; i < arrow.size();i++)
-				{
-					Eliarrow(arrow, i);
-				}
-			}
-		}
+		
 		handleEvents();
 		update();
 		render();

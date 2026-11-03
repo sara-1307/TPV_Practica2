@@ -86,7 +86,7 @@ public:
 	// Ejecuta el bucle principal del juego
 	void run();
 	bool loadLevel(string archivo);
-
+	void RevisarMeta(); 
 	// Comprueba si hay algún objeto colocado en ese rectángulo
 	bool checkCollision(const Rectangle& rect);
 
