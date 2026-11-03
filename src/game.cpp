@@ -273,7 +273,7 @@ void Game::handleEvents()
 			{
 				Point2D posflecha = bow->getposmed(); 
 				Rectangle rec(posflecha, 100, 20);
-				Arrow* flecha = new Arrow(this, getTexture(ARROW), rec, Point2D<>(bow->GetArrowSpeed(), 0));
+				Arrow* flecha = new Arrow(this, getTexture(ARROW), rec, Point2D<>(1, 0));
 				arrow.push_back(flecha);
 				infoBar->updatelife();
 				arrows--;
