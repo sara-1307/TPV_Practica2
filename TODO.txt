@@ -1,0 +1,32 @@
+//Nuevo//
+-Cambiar leer archivo de run a update
+-El arco se encarga de crear las flechas, y este se las pasa al game
+-Clases Abstracta GameObject
+-Clase Abstracta SceneObjet
+-Clase Abstracta MobileObject
+-Mariposa
+-Actualizar lista de objetos a lista polimórfica.
+-Guardar partida
+-Cargar partida
+-Jerarquía de excepciones
+
+//Antiguo//
+-Reducir leer archivo y añadir lo nuevo.
+-Generación globos aleatorios.
+
+//Nuevo extra//
+-Elegir en que archivo guarda
+-Elegir de que archivo cargar
+-Perder si no hay mariposas
+-Movimiento ratón
+-Sonidos
+{
+mariposa
+globo
+flecha
+arco
+}
+
+
+
+
