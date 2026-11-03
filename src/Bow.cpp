@@ -18,7 +18,7 @@ void Bow::CrearFlecha()
 {
 	Point2D posflecha = getposmed();
 	Rectangle rec(posflecha, 100, 20);
-	Arrow* flecha = new Arrow(this, getTexture(ARROW), rec, Point2D<>(1, 0));
+	
 	
 }
 bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
