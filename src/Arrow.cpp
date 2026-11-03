@@ -13,7 +13,7 @@ bool Arrow::update(float delta)
 	constexpr int ArrowWidth = 25;
 	constexpr int ArrowHeight = 20;
 	constexpr int limit = 800;
-
+	//////////////
 	position.move(speed * delta);
 	Point2D<> corner = position.getTopLeftCorner(); 
 	float x = corner.getX() + position.getWidth() - ArrowWidth; // quito para que el rectangulo solo este en la derecha donde la punta 
