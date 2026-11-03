@@ -1,0 +1,13 @@
+Sara Quílez Martínez
+Alejandro Jiménez Rojo
+
+Grupo 02
+Cosas extra que hemos hecho
+1) Soporte para múltiples niveles
+2) Clase infobar implementada
+3) Añade soporte para cargar más opciones de configuración, color fondo , nflechas, objetivo, baldelay
+4) velocidad de la flecha dependiendo del tiempo que lleva cargada
+Cosas que no hemos hecho
+Que la aparición de globos sea también aleatoria. 
+
+No hemos detectado ningún conflicto grave.
