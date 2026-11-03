@@ -14,6 +14,13 @@ void Bow::setArrows(int arrows)
 {
 	this->NArrow = arrows;
 }
+void Bow::CrearFlecha()
+{
+	Point2D posflecha = getposmed();
+	Rectangle rec(posflecha, 100, 20);
+	Arrow* flecha = new Arrow(this, getTexture(ARROW), rec, Point2D<>(1, 0));
+	
+}
 bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
 {
 	if (event.type == SDL_EVENT_KEY_DOWN)
@@ -38,9 +45,7 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 		{
 			if (armed && NArrow != 0)
 			{
-				float carga = LoadTime; // Calculamos la porporcion de la carga
-				 // no superamos el maximo
-				SpeedArrow = SpeedArrow + carga * (SpeedMax - SpeedMin); // Hacemos magia negra para interpolar  la flecha esta formula no la he sacado yo la he buscado en google y reddit 
+				
 				armed = false;
 				NArrow--;
 				return true;

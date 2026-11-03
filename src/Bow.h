@@ -3,6 +3,7 @@
 #include "rectangle.h"
 #include <SDL3/SDL.h>
 #include "texture.h"
+#include "arrow.h"
 class Bow
 {
 private: 
@@ -28,5 +29,6 @@ public:
 	Point2D<> getposmed(); //Consigo la posiciond el arco en la mitad para crear la flecha
 	float GetArrowSpeed() const;
 	void setArrows(int arrows);
+	void CrearFlecha();
 };
 
