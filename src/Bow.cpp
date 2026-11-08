@@ -2,8 +2,8 @@
 
 Point2D<> Bow::getposmed() // devuelve la posicion del arco para la flecha para crearlo exactamente en el centro
 {
-	Point2D<> esqui = Position.getTopLeftCorner(); // consigo la esquina
-	return Point2D<>(esqui.getX() + Position.getWidth() / 2, esqui.getY() + Position.getHeight() / 2);  // esto hace que se cree justo en la mitad
+	Point2D<> esqui = position.getTopLeftCorner(); // consigo la esquina
+	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);  // esto hace que se cree justo en la mitad
 
 }
 float Bow::GetArrowSpeed() const
@@ -27,11 +27,11 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 	{
 		if (event.key.key == SDLK_UP)
 		{
-			Address.SetY(-speedBow);
+			Address.SetY(-Speed.getY()); //AReglar
 		}
 		else if (event.key.key == SDLK_DOWN)
 		{
-			Address.SetY(speedBow);
+			Address.SetY(Speed.getY());
 		}
 		else if (event.key.key == SDLK_LEFT )
 		{
@@ -59,19 +59,19 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 	}
 	return false;
 }
-Bow::Bow(Rectangle pos, Texture* tex, Point2D<> velocidad, int NFlechas, bool armado, int speed)
+Bow::Bow(Rectangle pos, Texture* tex, Point2D<> speed, int NFlechas, bool armado, Point2D<> Address)
 {
-	this->Position = pos; 
+	this->position = pos; 
 	texture = tex;
-	this->Address = velocidad;
+	this->Address = Address; 
 	this->NArrow = NFlechas; 
 	this->armed = armado; 
-	this->speedBow = speed;
+	this->Speed = speed;
 }
 void Bow::render() const
 {
 
-	texture->renderFrame(Position.to_sdl(), 0, !armed); //usamo armed porque es un bool es decir en verdad es 1 o 0
+	texture->renderFrame(position.to_sdl(), 0, !armed); //usamo armed porque es un bool es decir en verdad es 1 o 0
 }
 bool Bow::update(float delta) 
 {
@@ -80,13 +80,13 @@ bool Bow::update(float delta)
 	{
 		LoadTime += delta/1000;
 	}
-	Rectangle aux = Position.moved(Address * delta);//estoy usando moved no move lo que devuelve un rectangulo
+	Rectangle aux = position.moved(Address * delta);//estoy usando moved no move lo que devuelve un rectangulo
 
 	float y = aux.getTopLeftCorner().getY();
 
 	if (y >= 0 && y + aux.getHeight() <= limit)
 	{
-		Position = aux;
+		position = aux;
 	}
 	return NArrow != 0;
 	

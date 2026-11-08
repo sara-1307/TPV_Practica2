@@ -4,7 +4,7 @@
 
 bool Balloon::hit(const Rectangle& obj)
 {
-	if (Position.hasIntersection(obj)) 
+	if (position.hasIntersection(obj)) 
 	{
 		exploit = true;
 		return true;
@@ -13,7 +13,7 @@ bool Balloon::hit(const Rectangle& obj)
 }
 void Balloon::render() const
 {
-	texture->renderFrame(Position.to_sdl(), color, FrameAnimation);
+	texture->renderFrame(position.to_sdl(), color, FrameAnimation);
 }
 bool Balloon::getexploto() const // explicado en el h
 {
@@ -22,7 +22,7 @@ bool Balloon::getexploto() const // explicado en el h
 
 Balloon::Balloon(Rectangle pos,  int color, Point2D<> velocidad, Texture* textura)
 {
-	this->Position = pos;
+	this->position = pos;
 	this->color = color; 
 	this->Speed = velocidad; 
 	this->texture = textura;
@@ -60,8 +60,8 @@ bool Balloon::update(float delta)
 		return true;
 		
 	}
-	Position.move(Speed * delta); // Para que el tiempo no dependa de la maquina
-	return (Position.getTopLeftCorner().getY() > -50); // preguntar
+	position.move(Speed * delta); // Para que el tiempo no dependa de la maquina
+	return (position.getTopLeftCorner().getY() > -50); // preguntar
 
 	
 }

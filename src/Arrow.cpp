@@ -14,7 +14,7 @@ bool Arrow::update(float delta)
 	constexpr int ArrowHeight = 20;
 	constexpr int limit = 800;
 	//////////////
-	position.move(speed * delta);
+	position.move(Speed * delta);
 	Point2D<> corner = position.getTopLeftCorner(); 
 	float x = corner.getX() + position.getWidth() - ArrowWidth; // quito para que el rectangulo solo este en la derecha donde la punta 
 	float y = corner.getY(); //uso todo el ancho
@@ -31,7 +31,7 @@ Arrow::Arrow(Game* game,Texture* tex, Rectangle pos, Point2D<> velocidad)
 {
 	this->game = game; 
 	this->position = pos; 
-	this->speed = velocidad; 
+	this->Speed = velocidad; 
 	this->texture = tex;
 
 }

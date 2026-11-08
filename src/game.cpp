@@ -82,7 +82,7 @@ Game::Game()
 	
 
 	Rectangle rectArco(Point2D<>(100, 100), 100,100);
-	bow = new Bow(rectArco, getTexture(BOW), Point2D<>(0, 0),arrows, true,1);
+	bow = new Bow(rectArco, getTexture(BOW), Point2D<>(1, 0),arrows, true, Point2D<>(0, 0));
 	cont =  deltatime =  puntuacion = TimeBalloons = 0; // Se que deltatime no lo uso es porque quiero preguntarle algo a Rubén y lo dejo para cuando lo pregunte
 	infoBar = new InfoBar (getTexture(DIGITS), getTexture(ARROW), getTexture(DANCE), arrows, to_string(goal));
 	
