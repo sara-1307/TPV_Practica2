@@ -19,11 +19,13 @@ public:
 	// Coordenadas del vector
 	T getX() const { return x; }
 	T getY() const { return y; }
-	T SetX(int x)
+	T SetX(T x)
 	{
-		this->x = x; 
+		this->x = x;
+		return this->x; // 
 	}
-	void SetY(int y)
+
+	void SetY(T y)
 	{
 		this->y = y;
 	}
