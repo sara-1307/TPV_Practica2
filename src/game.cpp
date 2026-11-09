@@ -30,7 +30,7 @@ struct TextureSpec
 
 constexpr array<TextureSpec, Game::NUM_TEXTURES> textureList{
 	TextureSpec{"bow.png", 1, 2},
-	{"arrow.png"},{"balloons.png",7,6},{"Dance.png", 1,8},{"digits.png",1,10},
+	{"arrow.png"},{"balloons.png",7,6},{"Dance.png", 1,8},{"digits.png",1,10},{"butterfly.png", 4,10 },
 };
 
 Game::Game()
@@ -252,11 +252,8 @@ Game::update()
 
 void Game::run()
 {
-	//double ultip = SDL_GetTicks();  // Preguntan a ruben 
 	while (!exit) {
-		//double tiempoactual = SDL_GetTicks();
-	   // deltatime = (tiempoactual - ultip) / 1000.0f;
-		//ultip = tiempoactual; 
+
 		
 		handleEvents();
 		update();

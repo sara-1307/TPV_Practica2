@@ -40,6 +40,7 @@ public:
 		BALLOON,
 		DANCE,
 		DIGITS,
+		BUTTERFLY,
 		NUM_TEXTURES
 	};
 
