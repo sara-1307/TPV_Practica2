@@ -4,12 +4,13 @@
 #include <SDL3/SDL.h>
 #include "texture.h"
 #include "arrow.h"
-#include "MobileObject.h"
-class Bow : public MobileObject
+#include "SceneObject.h"
+class Bow : public SceneObject
 {
 private: 
 
 	Point2D<> Address; 
+	Point2D<> Speed;
 	int NArrow;
 	bool armed; 
 	
