@@ -3,20 +3,21 @@
 
 #include <SDL3/SDL.h>
 #include <array>
+#include <list>
 #include <istream>
-#include <vector>
 #include <fstream>
 #include <string>
 #include "rectangle.h"
 #include "Balloon.h"
 #include "Arrow.h"
 #include "Bow.h"
-#include <vector>
 #include <random>
 #include "InfoBar.h"
+#include "GameObject.h"
 using namespace std;
 
 // Declaraciones anticipadas
+class InfoBar;
 class Texture;
 // uno
 /**
@@ -38,8 +39,8 @@ public:
 		BOW = 0,
 		ARROW,
 		BALLOON,
-		DANCE,
 		DIGITS,
+		BUTTERFLY,
 		NUM_TEXTURES
 	};
 
@@ -56,17 +57,22 @@ private:
 	float StartTime = 0; 
 	float FrameTime = 0;
 	bool ganaste = false;
+	bool thereAreButterflies;
+	//Objetos de juego
 	Bow* bow;
-	std::vector<Arrow*> arrow;
-	std::vector<Balloon*> balloon;
+	std::list<SceneObject*> SceneObjectsList;
+	
+	//Variables que controlan el spawn de globo
 	float baldelay;
 	int cont;
+	int nButterflies = 0;
+	int balspeed = 1;
 	int arrows;
 	std::mt19937_64 randomGenerator;
 	double deltatime;
 	int puntuacion;
 	int goal;
-    int ballpoints;
+	int ballpoints;
 	InfoBar* infoBar;
 	float TimeBalloons;
 	 int level = 1;
@@ -79,19 +85,38 @@ public:
 	Game();
 	~Game();
 
+	std::mt19937_64* GetRandomGenerator();
 	// Obtiene una textura por su nombre
 	Texture* getTexture(TextureName name) const;
-	void Eliglob(std::vector<Balloon*>&bal, int i); // elimina los globos
-	void Eliarrow(std::vector<Arrow*>& arrow, int i); // elimina las flechas
 	// Ejecuta el bucle principal del juego
 	void run();
 	bool loadLevel(string archivo);
 
 	// Comprueba si hay algún objeto colocado en ese rectángulo
-	bool checkCollision(const Rectangle& rect);
+	bool checkCollision(const Rectangle& rect,SceneObject* obj);
 
-	void CreateBalloon();
+	void CreateObjects(SceneObject* obj);
+	void addPoints(int p);
+	int getBalPoints()const;
+	int getPoints()const;
+	int getGoal()const;
+	int getArrows()const;
+	int getbalspeed()const;
+
+	int getNbutterflies()const;
+	void setNButterflies(int i);
+
+	
+
+	void saveFile(string file);
+	void loadFile(string file);
+
+	void CheckGoal();
+	
 };
+
+
+
 
 inline Texture*
 Game::getTexture(TextureName name) const

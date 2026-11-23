@@ -1,14 +1,21 @@
 #include "game.h"
+#include "game.h"
 
 #include <string>
 
 #include <SDL3_image/SDL_image.h>
 
 #include "texture.h"
- #include <vector>
 #include "Balloon.h"
+#include "Bow.h"
 #include <random>
-#include <algorithm>
+#include "Butterfly.h"
+
+//INCLUSION DE EXCEPCIONES
+#include "SDLError.h"
+#include "FileFormatError.h"
+#include "FileNotFound.h"
+#include "GameError.h"
 
 
 using namespace std;
@@ -27,11 +34,11 @@ struct TextureSpec
 	int nrows = 1;
 	int ncols = 1;
 };
-
 constexpr array<TextureSpec, Game::NUM_TEXTURES> textureList{
 	TextureSpec{"bow.png", 1, 2},
-	{"arrow.png"},{"balloons.png",7,6},{"Dance.png", 1,8},{"digits.png",1,10},
+	{"arrow.png"},{"balloons.png",7,6},{"digits.png",1,10},{"butterfly.png",4,10}
 };
+
 
 Game::Game()
   : exit(false),
@@ -39,31 +46,35 @@ Game::Game()
 {
 	// Carga SDL y crea la ventana con su renderizador
 	if (!SDL_Init(SDL_INIT_VIDEO))
-		throw "SDL_Init: "s + SDL_GetError();
+		throw SDLError();
 
 	if (!SDL_CreateWindowAndRenderer(WINDOW_TITLE,
-	                                 WINDOW_WIDTH, WINDOW_HEIGHT,
-	                                 0, &window, &renderer))
-		throw "window or renderer: "s + SDL_GetError();
+		WINDOW_WIDTH, WINDOW_HEIGHT,
+		0, &window, &renderer))
+		throw SDLError();
 
 	// Carga las texturas al inicio
+	//Indice que usaremos para ver que textura nos falla cuando hacemos el catch
+	size_t ExceptionIndex = 0;
 	try {
 		textures.fill(nullptr);
 		string imgRoot = IMAGE_ROOT;
 
 		for (size_t i = 0; i < textures.size(); i++) {
+			ExceptionIndex++;
 			auto [name, nrows, ncols] = textureList[i];
 			textures[i] = new Texture(renderer, (imgRoot + name).c_str(), nrows, ncols);
 		}
+		
 	}
 	catch (const string& error) {
-		std::cout << error << endl;
+		
 		for (int i = 0; i < textures.size();i++)
 		{
 			delete textures[i];
-
 		}
-		throw error; // relanza la excepción
+		auto [name, nrows, ncols] = textureList[ExceptionIndex];
+		throw FileNotFound(name); // relanza la excepción
 	}
 
 	// Configura que se pueden utilizar capas translúcidas
@@ -76,283 +87,375 @@ Game::Game()
 			delete textures[i];
 
 		}
-		throw string("Error: no se encuentra el fichero de configuracion: " );
+		throw FileNotFound((to_string(level) + ".txt"));
 	}
 	
 	
 
-	Rectangle rectArco(Point2D<>(100, 100), 100,100);
-	bow = new Bow(rectArco, getTexture(BOW), Point2D<>(0, 0),arrows, true,1);
-	cont =  deltatime =  puntuacion = TimeBalloons = 0; // Se que deltatime no lo uso es porque quiero preguntarle algo a Rubén y lo dejo para cuando lo pregunte
-	infoBar = new InfoBar (getTexture(DIGITS), getTexture(ARROW), getTexture(DANCE), arrows, to_string(goal));
+	for (int i = 0; i < nButterflies; i++)
+	{
+		new Butterfly(this);
+	}
+	infoBar = new InfoBar(this);
+	cont = deltatime =  puntuacion = TimeBalloons = 0; // Se que deltatime no lo uso es porque quiero preguntarle algo a Rubén y lo dejo para cuando lo pregunte
 	
 	
 }
-
 Game::~Game()
 {
+	delete infoBar;
+	infoBar = nullptr;
+	SceneObject* aux;
+	bow = nullptr;
+	for (auto i = SceneObjectsList.begin(); i != SceneObjectsList.end(); i++)
+	{
+		aux = *i;
+		delete aux;
+	}
+	SceneObjectsList.clear();
 	
-		for (int i = 0; i < balloon.size();i++)
-		{
-			delete balloon[i];
-		}
-		std::cout << " borrado todos los globos" << std::endl;
-
-		for (int i = 0; i < arrow.size();i++)
-		{
-			delete arrow[i];
-			
-		}
-		std::cout << " borrado todas las  flechas"<< std::endl;
 
 		for (int i = 0; i < textures.size();i++)
 		{
 			delete textures[i];
 			
 		}
-		std::cout << " borrado todos las texturas" << std::endl;
-	delete bow; 
-	delete infoBar;
 }
-
+std::mt19937_64* Game::GetRandomGenerator()
+{
+	return &randomGenerator;
+}
 void Game::render() const
 {
-	
 	SDL_RenderClear(renderer);
-	SDL_SetRenderDrawColor(renderer, Red, Green, Blue, 255); 
-	if (bow != nullptr)
+	SDL_SetRenderDrawColor(renderer, Red, Green, Blue, 255);
+	
+	for (auto i = SceneObjectsList.begin(); i != SceneObjectsList.end();i++) 
 	{
-		bow->render();
-
+		(*i)->render();
 	}
-	if (infoBar != nullptr)
-	{
-		infoBar->render();
-	}
-	
-	for (int i = 0; i < balloon.size();i++) 
-	{
-			balloon[i]->render();
-	}
-	
-	
-	for (int i = 0; i < arrow.size(); i++)
-	{
-			arrow[i]->render();
-		
-	}
-	
-	
-	
-
+	infoBar->render();
 	SDL_RenderPresent(renderer);
 }
-void Game::CreateBalloon() // preguntar
+void Game::CreateObjects(SceneObject* obj)
 {
-	std::cout << "generando globo";
-	 int color = std::uniform_int_distribution<int>(0, 5)(randomGenerator);
-	 int posx = std::uniform_int_distribution<int>(300, 700)(randomGenerator);
-	 float velocidad = std::uniform_real_distribution<float>(-1, -0.3)(randomGenerator); //SARA NO SABE USAR FLOAAAAAAAT // USO un INT PARA ESTOOOOOOOOOOO
-	 Rectangle rectball(Point2D<>(posx,800), 90, 90);
-	 Balloon* bal = new Balloon(rectball, color, Point2D<>(0, velocidad), getTexture(BALLOON));
-	 balloon.push_back(bal);
-	
-
+	SceneObjectsList.push_back(obj);
 }
-void Game::Eliglob(std::vector<Balloon*>& bal, int i) //Como el orden de los globos en el vector no importa puedo cambair el ultimo con el final y  reducir el vector
+void Game::update()
 {
-	if (bal[i]->getexploto())
-	{
-		puntuacion += ballpoints; 
-		infoBar->updatepoint(puntuacion);
-	}
-	swap(bal[i], bal[bal.size() - 1]); // A alex no le gusta esta maravilla
-	delete bal[bal.size() - 1]; 
-	bal.pop_back();
-}
-void Game::Eliarrow(std::vector<Arrow*>& arrow, int i)
-{
-	
-	swap(arrow[i], arrow[arrow.size() - 1]); 
-	delete arrow[arrow.size() - 1];
-	arrow.pop_back();
-}
-void
-Game::update()
-{
+	//Calculamos el principio del frame (Deltatime)
 	StartTime = SDL_GetTicks();
-	infoBar->update(arrows, getTexture(ARROW), FRAME_PERIOD);
+	//Calculamos el temporizador para spawnear los nuevos globos
 	TimeBalloons += FRAME_PERIOD; 
-	if (TimeBalloons >=baldelay )
+	if (TimeBalloons >=baldelay)
 	{
-		CreateBalloon();
+		new Balloon(this);
 		TimeBalloons = 0;
 	}
-	// globos
-	int i = 0; 
-	while (i < balloon.size())
+	//Updateamos todos los objetos del juego
+	auto i = SceneObjectsList.begin();
+	auto auxIt = SceneObjectsList.begin();
+	bool erase = false;
+	SceneObject* aux = nullptr;
+	while(i != SceneObjectsList.end() && !erase)
 	{
-		if (!balloon[i]->update(FRAME_PERIOD)) Eliglob(balloon, i);
-		else
-		{
-			i++;
-		}
-	}
-	cont++;
-	//arco
-	if (!bow->update(FRAME_PERIOD) && arrow.empty()) exit = true;
-	
-	//flechas
-	i = 0; 
-	while (i<arrow.size())
+		erase = !(*i)->update(FRAME_PERIOD);
+		aux = *i;
+		auxIt = i;
+		i++;
+		
+	}	
+	if (erase)
 	{
-		if (!(arrow[i]->update(FRAME_PERIOD)))
-		{
-			Eliarrow(arrow, i);
-		}
-		else
-		{
-			i++;
-		}
+		SceneObjectsList.erase(auxIt);
+		delete aux;
 	}
+	//UPDATEAMOS INFOBAR
+	infoBar->update(FRAME_PERIOD);
+	if (bow->getArrows() <= 0)
+	{
+		exit = true;
+	}
+	if (nButterflies == 0 && thereAreButterflies)
+	{
+		exit = true;
+	}
+	//Calculamos el tiempo entre los frames y frenamos el programa ese tiempo para mantener los frames correctamente
 	FrameTime = SDL_GetTicks() - StartTime;
 	if (FrameTime < FRAME_PERIOD)
 	{
 		SDL_Delay(FRAME_PERIOD - FrameTime);
 	}
-}
 
+}
+void Game::CheckGoal()
+{
+	if (puntuacion >= goal)
+	{
+		level++;
+		if (!(loadLevel((to_string(level) + ".txt"))))
+		{
+			ganaste = true;
+			exit = true;
+		}
+		else
+		{
+			puntuacion = 0;
+			TimeBalloons = 0;
+			bow->setArrows(arrows);
+		}
+	}
+}
 void Game::run()
 {
-	//double ultip = SDL_GetTicks();  // Preguntan a ruben 
-	while (!exit) {
-		//double tiempoactual = SDL_GetTicks();
-	   // deltatime = (tiempoactual - ultip) / 1000.0f;
-		//ultip = tiempoactual; 
-		if (puntuacion >= goal)
-		{
-			level++;
-			if (!(loadLevel((to_string(level) + ".txt"))))
-			{
-				ganaste = true;
-				exit = true;
-			}
-			else
-			{
-				puntuacion = 0;
-				TimeBalloons = 0;
-				bow->setArrows(arrows);
-				infoBar->PuntosProsimoNivel(to_string(goal), getTexture(DIGITS));
-				for (int i = 0; i < balloon.size();i++)
-				{
-					Eliglob(balloon, i);
-				}
-				for (int i = 0; i < arrow.size();i++)
-				{
-					Eliarrow(arrow, i);
-				}
-			}
-		}
+	while (!exit) {	
+	
 		handleEvents();
 		update();
 		render();
 	}
 }
-
 void Game::handleEvents()
 {
 	SDL_Event event;
-
+	
 	// Only quit is handled directly, everything else is delegated
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_EVENT_QUIT)
-			exit = true;
-		else
 		{
-			if (bow->handleEvent(event))  // Devuelve true cuando tiene que crear una flecha
-			{
-				Point2D posflecha = bow->getposmed(); 
-				Rectangle rec(posflecha, 100, 20);
-				Arrow* flecha = new Arrow(this, getTexture(ARROW), rec, Point2D<>(1, 0));
-				arrow.push_back(flecha);
-				infoBar->updatelife();
-				arrows--;
-			}
+			exit = true;
 		}
+		else
+		{//Usamos el & en el KMOD ya que es el operador "and bit a bit", si usaramos el == compararía TODOS los bits del mod, y no daría correcto
+			if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_S && event.key.mod & SDL_KMOD_CTRL)//&& event.key.mod == SDL_KMOD_CTRL)
+			{
+				saveFile("datos.txt");
+			}
+			if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_O && event.key.mod & SDL_KMOD_CTRL)//&& event.key.mod == SDL_KMOD_CTRL)
+			{
+				loadFile("datos.txt");
+			}
+			bow->handleEvent(event); // Devuelve true cuando tiene que crear una flecha
 			
-
-		
+			
+			
+		}
 	}
 }
-
-// bool
-bool Game::checkCollision(const Rectangle& rect)
+bool Game::checkCollision(const Rectangle& rect,SceneObject* obj)
 {
-
-	int i = 0;
-	while (i<balloon.size() &&!(balloon[i]->hit(rect))) //Recorro hasta encontrar un globo con el que choque
+	bool aux = false;
+	auto i = SceneObjectsList.begin();
+	while (i != SceneObjectsList.end()  && !aux) //Recorro hasta encontrar un globo con el que choque
 	{
+		(*i)->hitObj(obj);
+		aux = ((*i)->hit(rect));
+		
 		i++;
 	}
-	if (i != balloon.size())
-	{
-		
-		return true;
-	}
-	return false;
+	
+	return i != SceneObjectsList.end();
+	
  }
 bool Game::loadLevel(string archivo)
 {
+	//Borramos los objetos de la esccena para limpiar el nivel
+	SceneObject* aux;
+	bow = nullptr;
+	for (auto i = SceneObjectsList.begin(); i != SceneObjectsList.end(); i++)
+	{
+		aux = *i;
+		delete aux;
+	}
+	SceneObjectsList.clear();
+	
+	//Asumimos que no van a haber mariposas, luego si encontramos una la ponemos a true
+	this->thereAreButterflies = false;
+		
+	//Creamos el nuevo arco
+
 	ifstream archi(string(LEVEL_ROOT) +  archivo);
 	if (!archi)
 	{
 		return false;
 	}
 	string palabras; 
+	int line = 0;
 	while (archi >> palabras)
 	{
-		if (palabras[0] == '#') archi.ignore(1000, '\n');
+		line++;
+		if (palabras[0] == '#') { archi.ignore(1000, '\n'); line++; }
 		else if (palabras == "arrows")
 		{
-			if (!(archi >> arrows))
-			{
-				throw string("Error: valor incorrecto para arrows" ); archi.close();
-			}
+			archi >> arrows;
+		}
+		else if (palabras == "butterflies")
+		{
+			archi >> nButterflies;
+			thereAreButterflies = nButterflies > 0;
 		}
 		else if (palabras == "baldelay")
 		{
-			if (!(archi >> baldelay))
-			{
-				throw string("Error: valor incorrecto para baldelay"); archi.close();
-			}
+			archi >> baldelay;
 		}
 		else if (palabras == "goal")
 		{
-			if (!(archi >> goal))
-			{
-				throw string("Error: valor incorrecto para goal"); archi.close();
-			}
+			archi >> goal;
 		}
 		else if (palabras == "balpoints")
 		{
-			if (!(archi >> ballpoints))
-			{
-				throw string("Error: valor incorrecto para ballpoinr"); archi.close();
-			}
+			archi >> ballpoints;
+		}
+		else if (palabras == "balspeed")
+		{
+			archi >> balspeed;
 		}
 		else if (palabras == "bgcolor")
 		{
-			if (!(archi >> Red >>Green>>Blue))
-			{
-				throw string("Error: valor incorrecto para bgcolor"); archi.close();
-			}
+			archi >> Red >> Green >> Blue;
 		}
 		else
 		{
-			archi.close(); throw string("Error: Parametro no encontrado");
+			archi.close();
+			throw FileFormatError(archivo, line);
+		}
+
+		if (archi.fail())
+		{
+			archi.close();
+			throw FileFormatError(archivo, line);
 		}
 	}
 	archi.close();
+	bow = new Bow(this, 1, arrows);
 	return true;
+}
+int Game::getPoints()const
+{
+	return puntuacion;
+}
+int Game::getGoal()const
+{
+	return goal;
+}
+void Game::addPoints(int p)
+{
+	this->puntuacion += p;
+	if (puntuacion < 0)
+	{
+		puntuacion = 0;
+	}
+}
+int Game::getBalPoints()const{
+	return ballpoints;
+}
+int Game::getArrows()const
+{
+	return bow->getArrows();
+}
+int Game::getbalspeed()const
+{
+	return balspeed;
+}
+void Game::saveFile(string file)
+{
+	ofstream output(LEVEL_ROOT+file);
+
+	if (!output)
+	{
+		throw FileNotFound(file);
+	}
+
+	output << "Game " << level<< " "<<puntuacion <<" "<<thereAreButterflies << endl;
+
+	for (auto i = SceneObjectsList.begin(); i != SceneObjectsList.end(); i++)
+	{
+		(*i)->saveObj(output);
+	}
+	
+}
+void Game::loadFile(string file)
+{
+
+	//Intentamos cargar el archivo
+	ifstream LoadFile(LEVEL_ROOT + file);
+
+	if (!LoadFile)
+	{
+		throw FileNotFound(file);
+		return;
+	}
+
+	//Borramos los objetos actuales
+	bow = nullptr;
+	SceneObject* aux;
+	for (auto i = SceneObjectsList.begin(); i != SceneObjectsList.end(); i++)
+	{
+		aux = *i;
+		delete aux;
+	}
+	SceneObjectsList.clear();
+	
+	//Vamos cargando los objetos que leemos
+	string word;
+	int line = 0;
+		while (LoadFile>> word)
+		{	
+			try
+			{
+				if (word == "Game")
+				{
+					line++;
+					int lvl;
+					LoadFile >> lvl;
+					loadLevel(to_string(lvl) + ".txt");
+					LoadFile >> puntuacion;
+					LoadFile >> this->thereAreButterflies;
+				}
+				else if (word == "Arrow")
+				{
+					line++;
+					new Arrow(this, LoadFile);
+				}
+				else if (word == "Balloon")
+				{
+					line++;
+					new Balloon(this, LoadFile);
+				}
+				else if (word == "Bow")
+				{
+					line++;
+					bow = new Bow(this, LoadFile);
+				}
+				else if (word == "Butterfly")
+				{
+					line++;
+					new Butterfly(this, LoadFile);
+				}
+				else
+				{
+					line++;
+					throw FileFormatError(string(LEVEL_ROOT + file),line);
+				}
+			}
+			catch(GameError e)
+			{
+				LoadFile.close();
+				throw FileFormatError(string(LEVEL_ROOT + file), line);
+			}
+				
+		}
+		LoadFile.close();
+		SDL_Delay(1000);
+
+}
+
+int Game::getNbutterflies()const
+{
+	return this->nButterflies;
+}
+void Game::setNButterflies(int i)
+{
+	this->nButterflies = i;
 }
 

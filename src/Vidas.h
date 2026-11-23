@@ -1,14 +1,16 @@
 #pragma once
-#include "rectangle.h"
-#include "texture.h"
-class Vidas
+
+#include "SceneObject.h"
+#include "game.h"
+class Vidas: public SceneObject
 {
 private:
-	Texture* textura;
-	Rectangle pos;
+	int ArrowIndex;
 public:
-	Vidas(Texture* tex, Rectangle pos);
-	void render() const;
-	
+	Vidas(Game* game, int i);
+	protected:
+		bool update(float delta) override;
+		void render() const override;
+
 };
 

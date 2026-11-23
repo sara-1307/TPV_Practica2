@@ -1,9 +1,11 @@
 #include "Bow.h"
+#include "game.h"
+#include "rectangle.h"
 
-Point2D<> Bow::getposmed() // devuelve la posicion del arco para la flecha para crearlo exactamente en el centro
+Point2D<> Bow::getMediumPos() // devuelve la posicion del arco para la flecha para crearlo exactamente en el centro
 {
-	Point2D<> esqui = Position.getTopLeftCorner(); // consigo la esquina
-	return Point2D<>(esqui.getX() + Position.getWidth() / 2, esqui.getY() + Position.getHeight() / 2);  // esto hace que se cree justo en la mitad
+	Point2D<> esqui = position.getTopLeftCorner(); // consigo la esquina
+	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);  // esto hace que se cree justo en la mitad
 
 }
 float Bow::GetArrowSpeed() const
@@ -16,18 +18,23 @@ void Bow::setArrows(int arrows)
 }
 bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
 {
+	
 	if (event.type == SDL_EVENT_KEY_DOWN)
 	{
+		//Controlamos si se esta presionando el control para "tensar" el arco
+		charging = event.key.key == SDLK_RCTRL || event.key.mod & SDL_KMOD_CTRL;
+		//Revisamos las teclas
 		if (event.key.key == SDLK_UP)
 		{
-			Address.SetY(-speedBow);
+			speed.SetY(-BowSpeed);
 		}
 		else if (event.key.key == SDLK_DOWN)
 		{
-			Address.SetY(speedBow);
+			speed.SetY(BowSpeed);
 		}
 		else if (event.key.key == SDLK_LEFT )
 		{
+			//charging = event.key.mod & SDL_KMOD_CTRL;
 			if (!armed && NArrow != 0)
 			{
 				armed = true; 
@@ -36,13 +43,20 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 		}
 		else if (event.key.key == SDLK_RIGHT)
 		{
+			
 			if (armed && NArrow != 0)
 			{
-				float carga = LoadTime; // Calculamos la porporcion de la carga
-				 // no superamos el maximo
-				SpeedArrow = SpeedArrow + carga * (SpeedMax - SpeedMin); // Hacemos magia negra para interpolar  la flecha esta formula no la he sacado yo la he buscado en google y reddit 
-				armed = false;
+				if (SpeedArrow > SpeedMax)
+				{
+					SpeedArrow = SpeedMax;
+				}
+				else if (SpeedArrow < SpeedMin)
+				{
+					SpeedArrow = SpeedMin;
+				}
 				NArrow--;
+				armed = false;
+				new Arrow(this->game, this->getMediumPos(),SpeedArrow);
 				return true;
 			}
 		}
@@ -50,40 +64,81 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 	}
 	else if (event.type == SDL_EVENT_KEY_UP)
 	{
-		Address.SetY(0);
+		//Frenamos la carga y el arco
+		charging = false;
+		speed.SetY(0);
 	}
 	return false;
 }
-Bow::Bow(Rectangle pos, Texture* tex, Point2D<> velocidad, int NFlechas, bool armado, int speed)
+Bow::Bow(Game* game,int BowMovSpeed, int NFlechas)
 {
-	this->Position = pos; 
-	texture = tex;
-	this->Address = velocidad;
+	this->armed = false;
+	this->charging = false;
+	this->game = game;
+	this->position = Rectangle(Point2D<>(100, 100), 100, 100);
+	this->texture = game->getTexture(game->BOW);
+	this->BowSpeed = BowMovSpeed;
 	this->NArrow = NFlechas; 
-	this->armed = armado; 
-	this->speedBow = speed;
-}
-void Bow::render() const
-{
+	this->game->CreateObjects(this);
 
-	texture->renderFrame(Position.to_sdl(), 0, !armed); //usamo armed porque es un bool es decir en verdad es 1 o 0
+}
+int Bow::getArrows()
+{
+	return NArrow;
 }
 bool Bow::update(float delta) 
 {
 	constexpr int limit = 600;
-	if (armed)
+	this->TextureCol = !armed;
+	if (armed && charging)
 	{
-		LoadTime += delta/1000;
+		SpeedArrow += delta / 1000;
 	}
-	Rectangle aux = Position.moved(Address * delta);//estoy usando moved no move lo que devuelve un rectangulo
-
-	float y = aux.getTopLeftCorner().getY();
-
-	if (y >= 0 && y + aux.getHeight() <= limit)
+	else
 	{
-		Position = aux;
+		SpeedArrow = SpeedMin;
+
 	}
+	//Guardamos la posición antes de mover
+	Rectangle aux = this->position;
+	//Movemos con el update del padre
+	MobileObject::update(delta);
+	//Calculamos si nos salimos de los límites, y si es así volvemos a antes de movernos.
+	float y = this->position.getTopLeftCorner().getY();
+	if (y <= 0 || y > this->game->WINDOW_HEIGHT-50)
+	{
+		this->position = aux;
+	}
+
+
 	return NArrow != 0;
 	
 }
+void Bow::saveObj(std::ostream& output)
+{
+	output << "Bow ";
+	MobileObject::saveObj(output);
+	output <<this->NArrow << " " << this->BowSpeed << " " << this->armed << endl;
+}
+Bow::Bow(Game* game, std::ifstream& input)
+{
+	this->game = game;
+	this->charging = false;
+	//Lectura coordenadas
+	float x, y;
+	input >> x >> y;
+	this->position = Rectangle(Point2D<>(x, y), 100, 100);
+	//Lectura textura
+	int fil, col;
+	input >> fil >> col;
+	this->TextureFil = fil;
+	this->TextureCol = col;
+	this->texture = this->game->getTexture(this->game->BOW);
+	//Lectura velocidad
+	input >> x >> y;
+	this->speed = Vector2D<float>(x, y);
 
+	input >> this->NArrow >> this->BowSpeed >> this->armed;
+	this->game->CreateObjects(this);
+	
+}

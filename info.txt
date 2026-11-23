@@ -3,11 +3,12 @@ Alejandro Jiménez Rojo
 
 Grupo 02
 Cosas extra que hemos hecho
-1) Soporte para múltiples niveles
-2) Clase infobar implementada
-3) Añade soporte para cargar más opciones de configuración, color fondo , nflechas, objetivo, baldelay
-4) velocidad de la flecha dependiendo del tiempo que lleva cargada
-Cosas que no hemos hecho
-Que la aparición de globos sea también aleatoria. 
+SI no hay mariposas, pierdes.
 
-No hemos detectado ningún conflicto grave.
+Conflictos:
+Sabemos que los getter deben ser constantes, lo planeamos cambiar;
+Vamos a organizar el proyecto para colocar los métodos en orden y categorías.
+Transformaremos los números mágicos correspondientes en constantes
+
+Hemos usado dynamic_Cast para llamara a un método exclusivo de Arrow
+(como globo recibimos el objeto que nos ha golpeado y debemos comprobar si es uno de tipo flecha.)

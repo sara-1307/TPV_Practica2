@@ -1,30 +1,25 @@
 #pragma once
-#include "vector2D.h"
-#include "rectangle.h"
-#include "texture.h"
-
-
-class Balloon
+#include "MobileObject.h"
+#include "game.h"
+#include <ostream>
+#include <random>
+class Balloon : public MobileObject
 {
 private:
-
-	Rectangle Position;
-	int color;
-	Point2D<>  Speed;
-	Texture* texture;
-	bool exploit;
+	bool exploding;
 	int FrameAnimation; // El  frame en el que estoy
 	float TimeAnimation; // el tiempo de la animacion
 	float TimeFrame; // el tiempo del frame
-
-	
+	int balspeed;
+	int Combo;
+	SceneObject* hitObj;
 
 public:
-	Balloon(Rectangle pos, int color, Point2D<> velocidad, Texture* tex);
-	bool hit(const Rectangle& obj);
-	void render() const;
-	bool update(float delta);
-	Balloon();
-	bool getexploto() const;  // nos permite saber si ese globo ha esplotado es decir el jugador lo revento
+	Balloon(Game* game);
+	Balloon(Game* game, std::ifstream& input);
+	virtual bool hit(const Rectangle& rect) override;
+	bool update(float delta) override;
+	bool getExploding() const;  // nos permite saber si ese globo ha esplotado es decir el jugador lo revento
+	void saveObj(std::ostream& output) override;
 };
 

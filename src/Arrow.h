@@ -1,22 +1,22 @@
 #pragma once
+#include "MobileObject.h"
+#include <ostream>
 #include "vector2D.h"
-#include "rectangle.h"
-#include "texture.h"
+
 
 //Declaracion anticipada porque sino hay dependencias circulares
 class Game; 
-class Arrow
+class Arrow : public MobileObject
 {
-private:
-	Game* game; // puntero a game
-	Rectangle position; // posicion y ancho alto
-	Point2D<>  speed; // velocidad 
-	Texture* texture; // textura
-
+protected:
+	int combo;
 public: 
-	void render() const; 
-	bool update(float delta);
-	
-	Arrow(Game* game,Texture* tex, Rectangle pos,  Point2D<> velocidad);
-};
+	bool update(float delta) override;
+	Arrow(Game* game,Point2D<> coordinates,float speed);
+	Arrow(Game* game, std::ifstream& input);
+	void saveObj(std::ostream& output) override;
+
+	void addCombo(int i);
+	int getCombo();
+}; 
 

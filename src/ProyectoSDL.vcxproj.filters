@@ -13,75 +13,138 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Archivos de código fuente\ClasesBase">
+      <UniqueIdentifier>{aa608964-9380-45dc-baf2-56522ccb9cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\ClasesBase">
+      <UniqueIdentifier>{8f25bc5f-5ca0-4168-ab8e-ac323dc591a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de código fuente\ClasesHijas">
+      <UniqueIdentifier>{e319791e-713f-4233-a696-4a41b27056bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\ClasesHijas">
+      <UniqueIdentifier>{3bbc1756-ac89-4123-8ebc-5efdf81a67b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de código fuente\ClasesHijas\Infobar">
+      <UniqueIdentifier>{fab3f05f-cc65-41b2-bb1a-065011240048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Excepciones">
+      <UniqueIdentifier>{cc16185d-7057-4df1-845e-60ddbf3c229f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de código fuente\excepciones">
+      <UniqueIdentifier>{1f1c3cfd-d28f-437d-8905-31c14c33d50a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Balloon.cpp">
-      <Filter>Archivos de código fuente</Filter>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Archivos de código fuente\ClasesBase</Filter>
     </ClCompile>
     <ClCompile Include="Arrow.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
+    </ClCompile>
+    <ClCompile Include="Balloon.cpp">
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
     <ClCompile Include="Bow.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
     <ClCompile Include="game.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
     <ClCompile Include="rectangle.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
     <ClCompile Include="texture.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
-    <ClCompile Include="InfoBar.cpp">
-      <Filter>Archivos de código fuente</Filter>
+    <ClCompile Include="MobileObject.cpp">
+      <Filter>Archivos de código fuente\ClasesBase</Filter>
     </ClCompile>
-    <ClCompile Include="Dance.cpp">
-      <Filter>Archivos de código fuente</Filter>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Archivos de código fuente\ClasesBase</Filter>
     </ClCompile>
-    <ClCompile Include="Vidas.cpp">
-      <Filter>Archivos de código fuente</Filter>
+    <ClCompile Include="Butterfly.cpp">
+      <Filter>Archivos de código fuente\ClasesHijas</Filter>
     </ClCompile>
     <ClCompile Include="Puntuacion.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\ClasesHijas\Infobar</Filter>
+    </ClCompile>
+    <ClCompile Include="Vidas.cpp">
+      <Filter>Archivos de código fuente\ClasesHijas\Infobar</Filter>
+    </ClCompile>
+    <ClCompile Include="InfoBar.cpp">
+      <Filter>Archivos de código fuente\ClasesHijas\Infobar</Filter>
+    </ClCompile>
+    <ClCompile Include="GameError.cpp">
+      <Filter>Archivos de código fuente\excepciones</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLError.cpp">
+      <Filter>Archivos de código fuente\excepciones</Filter>
+    </ClCompile>
+    <ClCompile Include="FileNotFound.cpp">
+      <Filter>Archivos de código fuente\excepciones</Filter>
+    </ClCompile>
+    <ClCompile Include="FileFormatError.cpp">
+      <Filter>Archivos de código fuente\excepciones</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Balloon.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Arrow.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="Balloon.h">
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
     </ClInclude>
     <ClInclude Include="Bow.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
     </ClInclude>
     <ClInclude Include="game.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="rectangle.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="vector2D.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
     </ClInclude>
     <ClInclude Include="InfoBar.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Dance.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Vidas.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
     </ClInclude>
     <ClInclude Include="Puntuacion.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="rectangle.h">
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="vector2D.h">
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="Vidas.h">
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Archivos de encabezado\ClasesBase</Filter>
+    </ClInclude>
+    <ClInclude Include="MobileObject.h">
+      <Filter>Archivos de encabezado\ClasesBase</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Archivos de encabezado\ClasesBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Butterfly.h">
+      <Filter>Archivos de encabezado\ClasesHijas</Filter>
+    </ClInclude>
+    <ClInclude Include="GameError.h">
+      <Filter>Archivos de encabezado\Excepciones</Filter>
+    </ClInclude>
+    <ClInclude Include="FileNotFound.h">
+      <Filter>Archivos de encabezado\Excepciones</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLError.h">
+      <Filter>Archivos de encabezado\Excepciones</Filter>
+    </ClInclude>
+    <ClInclude Include="FileFormatError.h">
+      <Filter>Archivos de encabezado\Excepciones</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

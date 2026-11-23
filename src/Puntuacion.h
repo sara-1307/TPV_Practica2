@@ -1,17 +1,15 @@
 #pragma once
 #include "rectangle.h"
 #include "texture.h"
-class Puntuacion
+#include "game.h"
+class Puntuacion :public SceneObject
 {
-
 private:
-	Texture* texture;
-	Rectangle position;
-	int frame;
+	int index;
 public:
-	Puntuacion(Texture* tex, Rectangle pos);
-	void update(int pos);
-	void render() const;
-	void Change(int pos);
+	Puntuacion(Game* game,int i);
+	bool update(float delta) override;
+	void render() const override;
+	int getDigit();
 };
 
