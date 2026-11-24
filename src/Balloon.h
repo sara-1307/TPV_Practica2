@@ -15,11 +15,14 @@ private:
 	SceneObject* hitObj;
 
 public:
-	Balloon(Game* game);
-	Balloon(Game* game, std::ifstream& input);
+	/*Balloon(Game* game);
+	Balloon(Game* game, std::ifstream& input);*/
+	Balloon(Rectangle pos, int color, Point2D<> velocidad, Texture* tex, Game* game);
 	virtual bool hit(const Rectangle& rect) override;
 	bool update(float delta) override;
 	bool getExploding() const;  // nos permite saber si ese globo ha esplotado es decir el jugador lo revento
-	void saveObj(std::ostream& output) override;
+	/*void saveObj(std::ostream& output) override;*/
+	void EscribirDatos(std::ostream& archivo) const override; // Escribe los datos del globo
+	Balloon(Game* game, std::istream& archivo, Texture* tex, int linea);
 };
 

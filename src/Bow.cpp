@@ -8,6 +8,35 @@ Point2D<> Bow::getMediumPos() // devuelve la posicion del arco para la flecha pa
 	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);  // esto hace que se cree justo en la mitad
 
 }
+void Bow::EscribirDatos(std::ostream& archivo) const
+{
+	archivo << "Bow ";
+	SceneObject::EscribirDatos(archivo);
+
+	archivo << Address.getX() << " " << Address.getY() << " " << speed.getX() << " " << speed.getY() << " " << NArrow << " " << armed << "\n";
+}
+Bow::Bow(Game* game, std::istream& archivo, Texture* tex, int linea)
+	: SceneObject(game, archivo, tex, linea)
+{
+	float x, y, sx, sy;
+	int a, ar;
+
+	if (!(archivo >> x >> y >> sx >> sy >> a >> ar) || a < 0 || (ar != 0 && ar != 1))
+	{
+		throw FileFormatError("saved.txt", linea);
+	}
+
+	Address.SetX(x);
+	Address.SetY(y);
+
+	speed.SetX(sx);
+	speed.SetY(sy);
+
+	NArrow = a;
+	armed = (ar != 0);
+	LoadTime = 0.0f;
+	SpeedArrow = 1.0f;
+}
 float Bow::GetArrowSpeed() const
 {
 	return SpeedArrow;
@@ -15,6 +44,18 @@ float Bow::GetArrowSpeed() const
 void Bow::setArrows(int arrows)
 {
 	this->NArrow = arrows;
+}
+
+Bow::Bow(Rectangle pos, Texture* tex, Point2D<> speed, int NFlechas, bool armado, Point2D<> Address, Game* game) :SceneObject(tex, pos, game)
+{
+
+	this->Address = Address;
+	this->NArrow = NFlechas;
+	this->armed = armado;
+	this->speed = speed;
+	LoadTime = 0.0f;
+	SpeedArrow = 0.3f;
+
 }
 bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
 {
@@ -70,18 +111,18 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 	}
 	return false;
 }
-Bow::Bow(Game* game,int BowMovSpeed, int NFlechas)
-{
-	this->armed = false;
-	this->charging = false;
-	this->game = game;
-	this->position = Rectangle(Point2D<>(100, 100), 100, 100);
-	this->texture = game->getTexture(game->BOW);
-	this->BowSpeed = BowMovSpeed;
-	this->NArrow = NFlechas; 
-	this->game->CreateObjects(this);
-
-}
+//Bow::Bow(Game* game,int BowMovSpeed, int NFlechas)
+//{
+//	this->armed = false;
+//	this->charging = false;
+//	this->game = game;
+//	this->position = Rectangle(Point2D<>(100, 100), 100, 100);
+//	this->texture = game->getTexture(game->BOW);
+//	this->BowSpeed = BowMovSpeed;
+//	this->NArrow = NFlechas; 
+//	this->game->CreateObjects(this);
+//
+//}
 int Bow::getArrows()
 {
 	return NArrow;
@@ -114,31 +155,31 @@ bool Bow::update(float delta)
 	return NArrow != 0;
 	
 }
-void Bow::saveObj(std::ostream& output)
-{
-	output << "Bow ";
-	MobileObject::saveObj(output);
-	output <<this->NArrow << " " << this->BowSpeed << " " << this->armed << endl;
-}
-Bow::Bow(Game* game, std::ifstream& input)
-{
-	this->game = game;
-	this->charging = false;
-	//Lectura coordenadas
-	float x, y;
-	input >> x >> y;
-	this->position = Rectangle(Point2D<>(x, y), 100, 100);
-	//Lectura textura
-	int fil, col;
-	input >> fil >> col;
-	this->TextureFil = fil;
-	this->TextureCol = col;
-	this->texture = this->game->getTexture(this->game->BOW);
-	//Lectura velocidad
-	input >> x >> y;
-	this->speed = Vector2D<float>(x, y);
-
-	input >> this->NArrow >> this->BowSpeed >> this->armed;
-	this->game->CreateObjects(this);
-	
-}
+//void Bow::saveObj(std::ostream& output)
+//{
+//	output << "Bow ";
+//	MobileObject::saveObj(output);
+//	output <<this->NArrow << " " << this->BowSpeed << " " << this->armed << endl;
+//}
+//Bow::Bow(Game* game, std::ifstream& input)
+//{
+//	this->game = game;
+//	this->charging = false;
+//	//Lectura coordenadas
+//	float x, y;
+//	input >> x >> y;
+//	this->position = Rectangle(Point2D<>(x, y), 100, 100);
+//	//Lectura textura
+//	int fil, col;
+//	input >> fil >> col;
+//	this->TextureFil = fil;
+//	this->TextureCol = col;
+//	this->texture = this->game->getTexture(this->game->BOW);
+//	//Lectura velocidad
+//	input >> x >> y;
+//	this->speed = Vector2D<float>(x, y);
+//
+//	input >> this->NArrow >> this->BowSpeed >> this->armed;
+//	this->game->CreateObjects(this);
+//	
+//}
