@@ -30,13 +30,12 @@ bool Balloon::getExploding() const // explicado en el h
 //	this->game->CreateObjects(this);
 //}
 
-bool Balloon::hit(const Rectangle& obj, SceneObject* atacante)
+bool Balloon::hit(const Rectangle& obj)
 {
-	if (SceneObject::hit(obj, atacante) && !death) // Si me han dado y es la primera vez que me dan
+	if (SceneObject::hit(obj) && !death) // Si me han dado y es la primera vez que me dan
 	{
 
 		death = true;
-		atacante->explotados(); // hago que el contador del atacante suba
 		return true;
 	}
 

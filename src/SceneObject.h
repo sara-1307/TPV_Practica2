@@ -19,8 +19,8 @@ public:
 	SceneObject();
 	void render() const override; 
 	virtual bool hit(const Rectangle& rect);
-	virtual void saveObj(std::ostream& output);
-	virtual void hitObj(SceneObject* obj);
+	//virtual void saveObj(std::ostream& output);
+	////virtual void hitObj(SceneObject* obj);
 	SceneObject(Texture* tex, Rectangle rec, Game* game);
 	void EscribirDatos(std::ostream& archivo) const override;
 	SceneObject(Game* game, std::istream& archivo, Texture* tex, int linea);
