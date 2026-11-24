@@ -34,6 +34,9 @@
     <Filter Include="Archivos de código fuente\excepciones">
       <UniqueIdentifier>{1f1c3cfd-d28f-437d-8905-31c14c33d50a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\ClasesHijas\ClasesState">
+      <UniqueIdentifier>{2e481441-d73c-42dc-ba91-a800e638ff21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -90,6 +93,18 @@
     <ClCompile Include="FileFormatError.cpp">
       <Filter>Archivos de código fuente\excepciones</Filter>
     </ClCompile>
+    <ClCompile Include="gameStateMachine.cpp">
+      <Filter>Archivos de código fuente\ClasesBase</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Archivos de código fuente\ClasesBase</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arrow.h">
@@ -145,6 +160,18 @@
     </ClInclude>
     <ClInclude Include="FileFormatError.h">
       <Filter>Archivos de encabezado\Excepciones</Filter>
+    </ClInclude>
+    <ClInclude Include="gameStateMachine.h">
+      <Filter>Archivos de encabezado\ClasesBase</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Archivos de encabezado\ClasesBase</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
