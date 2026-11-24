@@ -12,12 +12,12 @@ protected:
 	bool dead;
 	float maxSpeed;
 public:
-	Butterfly(Game* game);
-	Butterfly(Game* game, std::ifstream& input);
+	//Butterfly(Game* game);
+	//Butterfly(Game* game, std::ifstream& input);s
 	void render() const override;
 	bool update(float delta);
 	void setAnimDir();
 	bool hit(const Rectangle& rect) override;
-	void saveObj(std::ostream& output) override;
+	//void saveObj(std::ostream& output) override;
 };
 

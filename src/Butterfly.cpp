@@ -1,47 +1,47 @@
 #include "Butterfly.h"
 #include "rectangle.h"
 
-Butterfly::Butterfly(Game* game)
-{
-	this->game = game;
-	this->maxSpeed = 0.3;
-	this->randomGenerator = game->GetRandomGenerator();
-	this->speed = Vector2D<float>(std::uniform_real_distribution<float>(-maxSpeed,maxSpeed)(*randomGenerator), std::uniform_real_distribution<float>(-maxSpeed, maxSpeed)(*randomGenerator));
-	this->texture = game->getTexture(this->game->BUTTERFLY);
-	int posx = std::uniform_int_distribution<int>(0, this->game->WINDOW_WIDTH)(*randomGenerator);
-	int posy = std::uniform_int_distribution<int>(0, this->game->WINDOW_HEIGHT)(*randomGenerator);
-	this->position = Rectangle(Point2D<>(posx, posy), 45, 45);
-	this->dirChangeTimer = 0;
-	this->dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
-	this->dead = false;
-	this->game->CreateObjects(this);
-
-}
-Butterfly::Butterfly(Game* game, std::ifstream& input)
-{
-	this->game = game;
-	//Lectura coordenadas
-	float x, y;
-	input >> x >> y;
-	this->position = Rectangle(Point2D<>(x, y), 45, 45);
-	//Lectura textura
-	int fil, col;
-	input >> fil >> col;
-	this->TextureFil = fil;
-	this->TextureCol = col;
-	this->texture = this->game->getTexture(this->game->BUTTERFLY);
-	//Lectura velocidad
-	input >> x >> y;
-	this->speed = Vector2D<float>(x, y);
-	//Cargamos estado
-	input >> this->dead;
-
-	this->maxSpeed = 0.3;
-	this->randomGenerator = game->GetRandomGenerator();
-	this->dirChangeTimer = 0;
-	this->dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
-	this->game->CreateObjects(this);
-}
+//Butterfly::Butterfly(Game* game)
+//{
+//	this->game = game;
+//	this->maxSpeed = 0.3;
+//	this->randomGenerator = game->GetRandomGenerator();
+//	this->speed = Vector2D<float>(std::uniform_real_distribution<float>(-maxSpeed,maxSpeed)(*randomGenerator), std::uniform_real_distribution<float>(-maxSpeed, maxSpeed)(*randomGenerator));
+//	this->texture = game->getTexture(this->game->BUTTERFLY);
+//	int posx = std::uniform_int_distribution<int>(0, this->game->WINDOW_WIDTH)(*randomGenerator);
+//	int posy = std::uniform_int_distribution<int>(0, this->game->WINDOW_HEIGHT)(*randomGenerator);
+//	this->position = Rectangle(Point2D<>(posx, posy), 45, 45);
+//	this->dirChangeTimer = 0;
+//	this->dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
+//	this->dead = false;
+//	this->game->CreateObjects(this);
+//
+//}
+//Butterfly::Butterfly(Game* game, std::ifstream& input)
+//{
+//	this->game = game;
+//	//Lectura coordenadas
+//	float x, y;
+//	input >> x >> y;
+//	this->position = Rectangle(Point2D<>(x, y), 45, 45);
+//	//Lectura textura
+//	int fil, col;
+//	input >> fil >> col;
+//	this->TextureFil = fil;
+//	this->TextureCol = col;
+//	this->texture = this->game->getTexture(this->game->BUTTERFLY);
+//	//Lectura velocidad
+//	input >> x >> y;
+//	this->speed = Vector2D<float>(x, y);
+//	//Cargamos estado
+//	input >> this->dead;
+//
+//	this->maxSpeed = 0.3;
+//	this->randomGenerator = game->GetRandomGenerator();
+//	this->dirChangeTimer = 0;
+//	this->dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
+//	this->game->CreateObjects(this);
+//}
 bool Butterfly::update(float delta)
 {
 	if (!dead)
@@ -100,24 +100,21 @@ void Butterfly::render() const
 { 
 	SceneObject::render();
 }
-bool Butterfly::hit(const Rectangle& rect)
+bool Balloon::hit(const Rectangle& obj)
 {
-	if (!this->dead)
+	if (SceneObject::hit(obj) && !death) // Si me han dado y es la primera vez que me dan
 	{
 
-		bool b = this->SceneObject::hit(rect);
-		if (b)
-		{
-			this->game->setNButterflies((this->game->getNbutterflies()) - 1);
-		}
-		this->dead = b;
-		
+		death = true;
+		return true;
 	}
-	return this->dead;
+
+	return false;
 }
-void Butterfly::saveObj(std::ostream& output)
-{
-	output << "Butterfly ";
-	MobileObject::saveObj(output);
-	output << this->dead<<endl;
-}
+
+//void Butterfly::saveObj(std::ostream& output)
+//{
+//	output << "Butterfly ";
+//	MobileObject::saveObj(output);
+//	output << this->dead<<endl;
+//}

@@ -102,6 +102,7 @@
     <ClCompile Include="Balloon.cpp" />
     <ClCompile Include="Bow.cpp" />
     <ClCompile Include="Butterfly.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="FileFormatError.cpp" />
     <ClCompile Include="FileNotFound.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="gameStateMachine.cpp" />
     <ClCompile Include="InfoBar.cpp" />
+    <ClCompile Include="Label.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MobileObject.cpp" />
     <ClCompile Include="PlayState.cpp" />
@@ -126,6 +128,7 @@
     <ClInclude Include="Balloon.h" />
     <ClInclude Include="Bow.h" />
     <ClInclude Include="Butterfly.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="FileFormatError.h" />
     <ClInclude Include="FileNotFound.h" />
@@ -135,6 +138,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="gameStateMachine.h" />
     <ClInclude Include="InfoBar.h" />
+    <ClInclude Include="Label.h" />
     <ClInclude Include="MobileObject.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="Puntuacion.h" />

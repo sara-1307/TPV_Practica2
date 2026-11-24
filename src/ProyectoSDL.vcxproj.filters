@@ -37,6 +37,12 @@
     <Filter Include="Archivos de código fuente\ClasesHijas\ClasesState">
       <UniqueIdentifier>{2e481441-d73c-42dc-ba91-a800e638ff21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Botones">
+      <UniqueIdentifier>{49fdcfb1-5732-41e3-b164-001cc9ee1d22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Botones">
+      <UniqueIdentifier>{46141dce-8136-4a5f-a415-59031ccec4a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -99,11 +105,17 @@
     <ClCompile Include="GameState.cpp">
       <Filter>Archivos de código fuente\ClasesBase</Filter>
     </ClCompile>
-    <ClCompile Include="EventHandler.cpp">
-      <Filter>Archivos de código fuente</Filter>
-    </ClCompile>
     <ClCompile Include="PlayState.cpp">
       <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
+    <ClCompile Include="Label.cpp">
+      <Filter>Archivos de código fuente\Botones</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>Archivos de código fuente\Botones</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Archivos de código fuente\Botones</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,11 +179,17 @@
     <ClInclude Include="GameState.h">
       <Filter>Archivos de encabezado\ClasesBase</Filter>
     </ClInclude>
-    <ClInclude Include="EventHandler.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="PlayState.h">
       <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Label.h">
+      <Filter>Archivos de encabezado\Botones</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.h">
+      <Filter>Archivos de encabezado\Botones</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Archivos de encabezado\Botones</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
