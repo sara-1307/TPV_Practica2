@@ -15,7 +15,7 @@ void Puntuacion::render() const
 }
 int Puntuacion::getDigit()
 {
-	int goal = this->game->getPoints();
+	int goal = game->getPoint();
 	int aux = goal % 10;
 	goal = goal / 10;
 	for (int i = 0; i < this->index; i++)

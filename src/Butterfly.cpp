@@ -1,120 +1,137 @@
 #include "Butterfly.h"
-#include "rectangle.h"
+#include "game.h"
 
-//Butterfly::Butterfly(Game* game)
-//{
-//	this->game = game;
-//	this->maxSpeed = 0.3;
-//	this->randomGenerator = game->GetRandomGenerator();
-//	this->speed = Vector2D<float>(std::uniform_real_distribution<float>(-maxSpeed,maxSpeed)(*randomGenerator), std::uniform_real_distribution<float>(-maxSpeed, maxSpeed)(*randomGenerator));
-//	this->texture = game->getTexture(this->game->BUTTERFLY);
-//	int posx = std::uniform_int_distribution<int>(0, this->game->WINDOW_WIDTH)(*randomGenerator);
-//	int posy = std::uniform_int_distribution<int>(0, this->game->WINDOW_HEIGHT)(*randomGenerator);
-//	this->position = Rectangle(Point2D<>(posx, posy), 45, 45);
-//	this->dirChangeTimer = 0;
-//	this->dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
-//	this->dead = false;
-//	this->game->CreateObjects(this);
-//
-//}
-//Butterfly::Butterfly(Game* game, std::ifstream& input)
-//{
-//	this->game = game;
-//	//Lectura coordenadas
-//	float x, y;
-//	input >> x >> y;
-//	this->position = Rectangle(Point2D<>(x, y), 45, 45);
-//	//Lectura textura
-//	int fil, col;
-//	input >> fil >> col;
-//	this->TextureFil = fil;
-//	this->TextureCol = col;
-//	this->texture = this->game->getTexture(this->game->BUTTERFLY);
-//	//Lectura velocidad
-//	input >> x >> y;
-//	this->speed = Vector2D<float>(x, y);
-//	//Cargamos estado
-//	input >> this->dead;
-//
-//	this->maxSpeed = 0.3;
-//	this->randomGenerator = game->GetRandomGenerator();
-//	this->dirChangeTimer = 0;
-//	this->dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
-//	this->game->CreateObjects(this);
-//}
-bool Butterfly::update(float delta)
+Butterfly::Butterfly(Point2D<> Dirección, Rectangle pos, Point2D<> velocidad, Texture* textura, float limirdir, Game* game)
+	: MobileObject(velocidad, textura, pos, game)
 {
-	if (!dead)
-	{
-		if (dirChangeTimer > dirChangeLimit)
-		{
-			dirChangeTimer = 0;
-			dirChangeLimit = std::uniform_real_distribution<float>(0, 500)(*randomGenerator);
-			this->speed = Vector2D<float>(std::uniform_real_distribution<float>(-maxSpeed, maxSpeed)(*randomGenerator), std::uniform_real_distribution<float>(-maxSpeed, maxSpeed)(*randomGenerator));
-		}
-		dirChangeTimer += delta;
-		int x = this->position.getTopLeftCorner().getX();
-		int y = this->position.getTopLeftCorner().getY();
-		if (y > this->game->WINDOW_HEIGHT || y <= 0 || x > this->game->WINDOW_WIDTH || x <= 0)
-		{
-			this->speed = Vector2D<float>(-this->speed.getX(), -this->speed.getY());
-		}
-		setAnimDir();
-	}
-	else
-	{
-		this->speed = Vector2D<float>(0, 1);
-		if (this->position.getTopLeftCorner().getY() > this->game->WINDOW_HEIGHT)
-		{
-			this->game->addPoints(-this->game->getBalPoints());
-			return false;
-		}
-	}
-	MobileObject::update(delta);
-	return true;
+
+	this->Dirección = Dirección;
+	FrameAnimation = 0;
+	TimeAnimation = 0.0f;
+	TimeFrame = 10.0f;
+	death = false;
+	this->limitdir = limirdir;
+	mismadir = 0;
+
 }
-void Butterfly::setAnimDir()
+bool Butterfly::hit(const Rectangle& obj)
 {
-	if (this->TextureCol < 10)
-	{
-		this->TextureCol++;
-	}
-	else
-	{
-		this->TextureCol = 0;
-	}
-	if (this->speed.getX() > 0)
-	{
-		this->TextureFil = 1;
-	}
-	else if (this->speed.getX() < 0)
-	{
-		this->TextureFil = 0;
-	}
-	else
-	{
-		this->TextureFil = 2;
-	}
-}
-void Butterfly::render() const 
-{ 
-	SceneObject::render();
-}
-bool Balloon::hit(const Rectangle& obj)
-{
-	if (SceneObject::hit(obj) && !death) // Si me han dado y es la primera vez que me dan
+	if (SceneObject::hit(obj) && !death)
 	{
 
 		death = true;
-		return true;
+		return false;
 	}
 
 	return false;
 }
+void Butterfly::render() const {
+	texture->renderFrame(position.to_sdl(), 0, FrameAnimation);
+}
 
-//void Butterfly::saveObj(std::ostream& output)
-//{
-//	output << "Butterfly ";
-//	MobileObject::saveObj(output);
-//	output << this->dead<<endl;
-//}
+Butterfly::Butterfly(Game* game, std::istream& archivo,
+	Texture* tex, int linea)
+	: MobileObject(game, archivo, tex, linea)
+{
+	TimeAnimation = 0.0f;
+	TimeFrame = 10.0f;
+
+	float x, y, f;
+	int fa;
+
+	if (!(archivo >> x >> y >> f >> fa))
+	{
+		throw FileFormatError("saved.txt", linea);
+	}
+
+	if (fa < 0 || fa > 11)
+	{
+		throw FileFormatError("saved.txt", linea);
+	}
+
+	Dirección.SetX(x);
+	Dirección.SetY(y);
+	mismadir = f;
+	FrameAnimation = fa;
+}
+void Butterfly::EscribirDatos(std::ostream& archivo) const
+{
+
+	archivo << "Butterfly ";
+	MobileObject::EscribirDatos(archivo);
+
+	archivo << " " << Dirección.getX() << " " << Dirección.getY() << "  " << mismadir << " " << FrameAnimation << " " << "\n";
+
+}
+bool Butterfly::update(float delta)
+{
+
+	constexpr int LimitTime = 10;
+	constexpr float velocidaddemuerte = 0.5f;
+
+
+
+	if (TimeAnimation >= TimeFrame)
+	{
+		TimeAnimation = 0;
+		if (FrameAnimation <= LimitTime)
+		{
+			FrameAnimation++;
+
+		}
+		else
+		{
+			FrameAnimation = 0;
+		}
+	}
+	else
+	{
+		TimeAnimation += delta;
+	}
+
+
+	if (death) // Si me muero para abajo
+	{
+
+		speed.SetX(0);
+		speed.SetY(velocidaddemuerte);
+		position.move(speed * delta);
+		if (position.getTopLeftCorner().getY() > Game::WINDOW_HEIGHT) // Solo me puedo morir si me han dado 
+		{
+			game->Quitarpuntuación(10);
+			return false;
+		}
+		return true;
+
+	}
+
+
+
+	if (mismadir >= limitdir) // Si ya ha pasado mi tiempo de moverme por esa misma dir me cambio a una dir aleatoria 
+	{
+		int x = game->nuevadir();
+		int y = game->nuevadir();
+		mismadir = 0;
+		speed.SetX(x * 0.15f);
+		speed.SetY(y * 0.15f);
+	}
+
+
+	mismadir += delta;
+
+
+	if (position.getTopLeftCorner().getY() < 10 || position.getTopLeftCorner().getY() + position.getHeight() > Game::WINDOW_HEIGHT - position.getHeight())
+	{
+
+		speed.SetY(speed.getY() * -1);
+	}
+	if (position.getTopLeftCorner().getX() < 10 || position.getTopLeftCorner().getX() + position.getWidth() > Game::WINDOW_WIDTH - position.getWidth())
+	{
+
+		speed.SetX(speed.getX() * -1);
+	}
+	position.move(speed * delta);
+
+	return true;
+
+}

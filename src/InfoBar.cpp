@@ -2,9 +2,9 @@
 #include "Puntuacion.h"
 #include "Vidas.h"
 
-InfoBar::InfoBar(Game* game)
+InfoBar::InfoBar(Game* game) :GameObject(game)
 {
-	this->game = game;
+	
 	//Es la flecha menos 1 porque empezamos en 0 
 	for (int i = 0; i < game->getArrows(); i++)
 	{
@@ -50,5 +50,8 @@ void InfoBar::render() const
 	{
 		v[i]->render();
 	}
+}
+void InfoBar::EscribirDatos(std::ostream&) const
+{
 }
 

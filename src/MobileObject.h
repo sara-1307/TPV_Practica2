@@ -10,7 +10,7 @@ protected:
 public:
 	MobileObject();
 	bool update(float delta) override;
-	void saveObj(std::ostream& output) override;
+	
 
 	MobileObject(Point2D<> Speed, Texture* tex, Rectangle rec, Game* game);
 	void EscribirDatos(std::ostream& archivo) const override;

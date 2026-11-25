@@ -3,36 +3,16 @@
 #include "rectangle.h"
 
 
-//SceneObject::SceneObject() {
-//	texture = nullptr;
-//	TextureFil = 0;
-//	TextureCol = 0;
-//	SceneObject* HitObject = nullptr;
-//};
 bool SceneObject::hit(const Rectangle& rect)
 {
 	return position.hasIntersection(rect);
 }
-//void SceneObject::hitObj(SceneObject* obj)
-//{
-//	if (this->position.hasIntersection(obj->position))
-//	{
-//		this->HitObject = obj;
-//	}
-//}
 
 void SceneObject::render() const
 {
 	texture->renderFrame(position.to_sdl(), TextureFil, TextureCol);
 }
 
-//void SceneObject::saveObj(std::ostream& output)
-//{
-//	//Guardamos coordenadas
-//	output << this->position.getTopLeftCorner().getX() << " " << this->position.getTopLeftCorner().getY()<<" ";
-//	//Guardamos fila y columna de textura
-//	output << this->TextureFil << " " << this->TextureCol << " " << this->TextureFil << " " << this->TextureCol << " ";
-//}
 
 void SceneObject::EscribirDatos(std::ostream& archivo) const
 {
@@ -46,7 +26,7 @@ SceneObject::SceneObject(Game* game, std::istream& archivo,	Texture* texture, in
 
 	if (!(archivo >> x >> y >> w >> h >> death) || w < 0 || h < 0)
 	{
-		throw FileFormatError(archivo, line);
+		throw FileFormatError("save", linea);
 	}
 
 	position = Rectangle({ x, y }, w, h);

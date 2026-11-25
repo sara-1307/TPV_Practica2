@@ -1,3 +1,11 @@
 #include "FileFormatError.h"
 
-FileFormatError::FileFormatError(const std::string& filename, int line):GameError(("Error en linea "+line+std::string(" del archivo "+filename)).c_str()){ }
+FileFormatError::FileFormatError(
+    const std::string& archivo,
+    int line)
+    : GameError(
+        ("Error en el archivo: " + archivo +
+         " en la línea " + std::to_string(line)).c_str())
+{
+}
+

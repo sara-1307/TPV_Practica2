@@ -3,26 +3,33 @@
 
 #include <SDL3/SDL.h>
 #include <array>
-#include <list>
 #include <istream>
+#include <vector>
 #include <fstream>
 #include <string>
 #include "rectangle.h"
 #include "Balloon.h"
 #include "Arrow.h"
-#include "Bow.h"
+
+#include <vector>
 #include <random>
 #include "InfoBar.h"
 #include "GameObject.h"
+#include "SceneObject.h"
+#include <algorithm>
+#include <list>
+#include "Butterfly.h"
+#include "FileNotFound.h"
+
 using namespace std;
 
 // Declaraciones anticipadas
-class InfoBar;
 class Texture;
 // uno
 /**
  * Clase principal del juego.
  */
+class Bow;
 class Game
 {
 public:
@@ -39,6 +46,7 @@ public:
 		BOW = 0,
 		ARROW,
 		BALLOON,
+		DANCE,
 		DIGITS,
 		BUTTERFLY,
 		NUM_TEXTURES
@@ -54,19 +62,16 @@ private:
 	void handleEvents();
 
 	bool exit;
-	float StartTime = 0; 
+	float StartTime = 0;
 	float FrameTime = 0;
-	bool ganaste = false;
-	bool thereAreButterflies;
-	//Objetos de juego
+	bool ganaste = false; // Controla si ganaste o perdiste
 	Bow* bow;
-	std::list<SceneObject*> SceneObjectsList;
-	
-	//Variables que controlan el spawn de globo
+	list<GameObject*> gameobjetc;
+	list<SceneObject*> sceneobject;
+	int NMariposa;
+
 	float baldelay;
 	int cont;
-	int nButterflies = 0;
-	int balspeed = 1;
 	int arrows;
 	std::mt19937_64 randomGenerator;
 	double deltatime;
@@ -75,53 +80,45 @@ private:
 	int ballpoints;
 	InfoBar* infoBar;
 	float TimeBalloons;
-	 int level = 1;
-	 int Red = 0;
-	 int Green = 0;
-	 int Blue = 0;
-
+	int level = 1;
+	int Red = 0;
+	int Green = 0;
+	int Blue = 0;
+	void CreateBalloon(); // Crea los globos
 
 public:
 	Game();
 	~Game();
-
-	std::mt19937_64* GetRandomGenerator();
+	void EscribirDatos(std::ostream& archivo);
 	// Obtiene una textura por su nombre
 	Texture* getTexture(TextureName name) const;
+	void Quitarpuntuación(int point);
+	void DarPuntuacion(int mul);
 	// Ejecuta el bucle principal del juego
 	void run();
 	bool loadLevel(string archivo);
-
+	void RevisarMeta();
 	// Comprueba si hay algún objeto colocado en ese rectángulo
-	bool checkCollision(const Rectangle& rect,SceneObject* obj);
+	bool checkCollision(const Rectangle& rect);
 
-	void CreateObjects(SceneObject* obj);
-	void addPoints(int p);
-	int getBalPoints()const;
-	int getPoints()const;
-	int getGoal()const;
-	int getArrows()const;
-	int getbalspeed()const;
 
-	int getNbutterflies()const;
-	void setNButterflies(int i);
-
-	
-
-	void saveFile(string file);
-	void loadFile(string file);
-
-	void CheckGoal();
-	
+	void addObject(SceneObject* obj);  // añade los objetos a la lista
+	void save();
+	void cargar();
+	int nuevadir();  // Responsable de dar nuevas direciones a la amriposas
+	void GenerarMariposas();
+	int getArrows() const;
+	int getGoal() const;
+	int getPoint() const;
+	int getBallPoint() const;
+	int getPoints() const;
 };
-
-
-
 
 inline Texture*
 Game::getTexture(TextureName name) const
 {
 	return textures[name];
 }
+
 
 #endif // GAME_H

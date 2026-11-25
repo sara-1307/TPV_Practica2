@@ -5,7 +5,7 @@
 Point2D<> Bow::getMediumPos() // devuelve la posicion del arco para la flecha para crearlo exactamente en el centro
 {
 	Point2D<> esqui = position.getTopLeftCorner(); // consigo la esquina
-	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);  // esto hace que se cree justo en la mitad
+	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);  // esto hace que se creme justo en la mitad
 
 }
 void Bow::EscribirDatos(std::ostream& archivo) const
@@ -15,8 +15,7 @@ void Bow::EscribirDatos(std::ostream& archivo) const
 
 	archivo << Address.getX() << " " << Address.getY() << " " << speed.getX() << " " << speed.getY() << " " << NArrow << " " << armed << "\n";
 }
-Bow::Bow(Game* game, std::istream& archivo, Texture* tex, int linea)
-	: SceneObject(game, archivo, tex, linea)
+Bow::Bow(Game* game, std::istream& archivo, Texture* tex, int linea): SceneObject(game, archivo, tex, linea)
 {
 	float x, y, sx, sy;
 	int a, ar;
@@ -97,7 +96,8 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 				}
 				NArrow--;
 				armed = false;
-				new Arrow(this->game, this->getMediumPos(),SpeedArrow);
+				this->game->addObject(new Arrow(this->game, this->game->getTexture(Game::ARROW), Rectangle(this->getMediumPos(), 40, 10), Point2D<>(SpeedArrow, 0)));
+				
 				return true;
 			}
 		}
@@ -111,18 +111,7 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 	}
 	return false;
 }
-//Bow::Bow(Game* game,int BowMovSpeed, int NFlechas)
-//{
-//	this->armed = false;
-//	this->charging = false;
-//	this->game = game;
-//	this->position = Rectangle(Point2D<>(100, 100), 100, 100);
-//	this->texture = game->getTexture(game->BOW);
-//	this->BowSpeed = BowMovSpeed;
-//	this->NArrow = NFlechas; 
-//	this->game->CreateObjects(this);
-//
-//}
+
 int Bow::getArrows()
 {
 	return NArrow;
@@ -143,7 +132,7 @@ bool Bow::update(float delta)
 	//Guardamos la posición antes de mover
 	Rectangle aux = this->position;
 	//Movemos con el update del padre
-	MobileObject::update(delta);
+	
 	//Calculamos si nos salimos de los límites, y si es así volvemos a antes de movernos.
 	float y = this->position.getTopLeftCorner().getY();
 	if (y <= 0 || y > this->game->WINDOW_HEIGHT-50)
@@ -155,31 +144,3 @@ bool Bow::update(float delta)
 	return NArrow != 0;
 	
 }
-//void Bow::saveObj(std::ostream& output)
-//{
-//	output << "Bow ";
-//	MobileObject::saveObj(output);
-//	output <<this->NArrow << " " << this->BowSpeed << " " << this->armed << endl;
-//}
-//Bow::Bow(Game* game, std::ifstream& input)
-//{
-//	this->game = game;
-//	this->charging = false;
-//	//Lectura coordenadas
-//	float x, y;
-//	input >> x >> y;
-//	this->position = Rectangle(Point2D<>(x, y), 100, 100);
-//	//Lectura textura
-//	int fil, col;
-//	input >> fil >> col;
-//	this->TextureFil = fil;
-//	this->TextureCol = col;
-//	this->texture = this->game->getTexture(this->game->BOW);
-//	//Lectura velocidad
-//	input >> x >> y;
-//	this->speed = Vector2D<float>(x, y);
-//
-//	input >> this->NArrow >> this->BowSpeed >> this->armed;
-//	this->game->CreateObjects(this);
-//	
-//}

@@ -16,7 +16,7 @@ bool Arrow::update(float delta)
 	
 	Rectangle ArrowHitbox (Point2D<>(x, y), ArrowWidth, ArrowHeight);
 	
-	game->checkCollision(ArrowHitbox,this);
+	game->checkCollision(ArrowHitbox);
 	
 	return (position.getTopLeftCorner().getX() < limit); // muere cuando sale de los limites de la pantalla
 }

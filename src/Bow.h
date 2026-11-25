@@ -2,8 +2,9 @@
 #include "MobileObject.h"
 #include <ostream>
 #include "Bow.h"
+#include "SceneObject.h"
 
-class Bow : public MobileObject
+class Bow : public SceneObject
 {
 private:
 //variable para almacenar la velocidad del arco (usaremos esto para cambiar la speed de MobileObject
@@ -18,6 +19,7 @@ private:
 	float SpeedArrow = 0.3f; // velocidad predeterminada
 
 	Point2D<> Address; // Direcion a la que me muevo
+	Point2D<> speed; // Velocidad a la que me muevo
 
 	static constexpr float SpeedMin = 0.1f;
 	static constexpr float SpeedMax = 5.0f;
@@ -25,18 +27,19 @@ private:
 	
 public:
 	bool handleEvent(const SDL_Event& event);
-	//Bow(Game*game,int velocidad, int NFlechas);
-	//void render() const;
-	bool update(float delta);
+	
+	void render() const;
+	bool update(float delta) override;
 	Point2D<> getMediumPos(); //Consigo la posiciond el arco en la mitad para crear la flecha
 	float GetArrowSpeed() const;
 	void setArrows(int arrows);
 	int getArrows();
-	//void saveObj(std::ostream& output) override;
-	//Bow(Game* game, std::ifstream& input);
 
 	Bow(Rectangle pos, Texture* tex, Point2D<> speed, int NFlechas, bool armado, Point2D<> Address, Game* game);
 	void EscribirDatos(std::ostream& archivo) const override;
 	Bow(Game* game, std::istream& archivo, Texture* tex, int linea);
+
+
+	
 };
 

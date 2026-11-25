@@ -6,15 +6,19 @@
 #include <vector>
 
 using namespace std;
+
 class InfoBar : public GameObject
 {
 private:
 	std::vector<SceneObject*> v;
-public:
+
+    public:
 	InfoBar(Game* game);
 	~InfoBar();
+
 	int getDigits();
 	void render() const override;
-	bool update(float delta) override;	
+	bool update(float delta) override;
+	void EscribirDatos(std::ostream& archivo) const override;
 };
 

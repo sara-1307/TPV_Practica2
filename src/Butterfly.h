@@ -1,23 +1,29 @@
 #pragma once
 #include "MobileObject.h"
-#include "game.h"
-#include <ostream>
-class Butterfly: public MobileObject
+#include "vector2D.h"
+
+class Game;
+class Butterfly : public MobileObject
 {
 protected:
-	std::mt19937_64* randomGenerator;
-	float dirChangeTimer;
-	float dirChangeLimit;
+	Point2D<> Dirección;
+	float mismadir; // Contador para ir viendo a que dirección voy
+	float limitdir;  // El limite de tiempo en los que puedo ir a una misma dirección
 
-	bool dead;
-	float maxSpeed;
+	int FrameAnimation; // El  frame en el que estoy
+	float TimeAnimation; // el tiempo de la animacion
+	float TimeFrame; // el tiempo del frame
+
+
 public:
-	//Butterfly(Game* game);
-	//Butterfly(Game* game, std::ifstream& input);s
+	Butterfly(Point2D<> Dirección, Rectangle pos, Point2D<> velocidad, Texture* textura, float limitdir, Game* game);
+
 	void render() const override;
-	bool update(float delta);
-	void setAnimDir();
-	bool hit(const Rectangle& rect) override;
-	//void saveObj(std::ostream& output) override;
+	bool update(float delta) override;
+
+	bool hit(const Rectangle& obj) override;
+
+	void EscribirDatos(std::ostream& archivo) const override;
+	Butterfly(Game* game, std::istream& archivo, Texture* tex, int linea);
 };
 
