@@ -2,6 +2,11 @@
 #include "game.h"
 
 class Game;
+
+void Arrow::addCombo(int i)
+{
+	this->combo += i;
+}
 bool Arrow::update(float delta)
 {
 	//Declaro las espresiones constante
@@ -16,9 +21,20 @@ bool Arrow::update(float delta)
 	
 	Rectangle ArrowHitbox (Point2D<>(x, y), ArrowWidth, ArrowHeight);
 	
-	game->checkCollision(ArrowHitbox);
+	if(game->checkCollision(ArrowHitbox))
+	{
+		addCombo(1);
+	}
 	
-	return (position.getTopLeftCorner().getX() < limit); // muere cuando sale de los limites de la pantalla
+	if (position.getTopLeftCorner().getX() > limit)
+	{
+		game->DarPuntuacion(combo); // Una vez la flecha ya ha salido significa que no puede dar a mas globos por lo que ya se pueden sumar los puntos conseguido con esa flecha
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }
 void Arrow::EscribirDatos(std::ostream& archivo) const
 {
@@ -35,47 +51,10 @@ Arrow::Arrow(Game* game, Texture* tex, Rectangle pos, Point2D<> velocidad) : Mob
 
 
 }
-//void Arrow::saveObj(std::ostream& output)
-//{
-//	output << "Arrow ";
-//	MobileObject::saveObj(output);
-//}
-//Arrow::Arrow(Game* game,Point2D<> coordinates,float speed)
-//{
-//	this->game = game;
-//	this->position = Rectangle(coordinates, 100, 20);
-//	this->texture = this->game->getTexture(game->ARROW);
-//	this->speed = Vector2D<float>(speed,0);
-//	this->game->CreateObjects(this);
-//	this->combo = 0;
-//	
-//}
-//Arrow::Arrow(Game* game, std::ifstream& input)
-//{
-//	this->game = game;
-//	//Lectura coordenadas
-//	int x, y;
-//	input >> x >> y;
-//	this->position = Rectangle(Point2D<>(x, y), 100, 20);
-//	//Lectura textura
-//	int fil, col;
-//	input >> fil >> col;
-//	this->TextureFil = fil;
-//	this->TextureCol = col;
-//	this->texture = this->game->getTexture(this->game->ARROW);
-//	//Lectura velocidad
-//	input >> x >> y;
-//	this->speed = Vector2D<float>(x, y);
-//	input >> combo;
-//	this->game->CreateObjects(this);
-//
-//}
 
 
-void Arrow::addCombo(int i)
-{
-	this->combo += i;
-}
+
+
 int Arrow::getCombo()
 {
 	return this->combo;
