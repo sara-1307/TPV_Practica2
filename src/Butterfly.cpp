@@ -20,7 +20,7 @@ bool Butterfly::hit(const Rectangle& obj)
 	{
 
 		death = true;
-		return false;
+       return true;
 	}
 
 	return false;
@@ -93,9 +93,9 @@ bool Butterfly::update(float delta)
 	if (death) // Si me muero para abajo
 	{
 
-		speed.SetX(0);
-		speed.SetY(velocidaddemuerte);
-		position.move(speed * delta);
+		Speed.SetX(0);
+		Speed.SetY(velocidaddemuerte);
+		position.move(Speed * delta);
 		if (position.getTopLeftCorner().getY() > Game::WINDOW_HEIGHT) // Solo me puedo morir si me han dado 
 		{
 			game->Quitarpuntuación(10);
@@ -112,8 +112,8 @@ bool Butterfly::update(float delta)
 		int x = game->nuevadir();
 		int y = game->nuevadir();
 		mismadir = 0;
-		speed.SetX(x * 0.15f);
-		speed.SetY(y * 0.15f);
+		Speed.SetX(x * 0.15f);
+		Speed.SetY(y * 0.15f);
 	}
 
 
@@ -123,14 +123,14 @@ bool Butterfly::update(float delta)
 	if (position.getTopLeftCorner().getY() < 10 || position.getTopLeftCorner().getY() + position.getHeight() > Game::WINDOW_HEIGHT - position.getHeight())
 	{
 
-		speed.SetY(speed.getY() * -1);
+		Speed.SetY(Speed.getY() * -1);
 	}
 	if (position.getTopLeftCorner().getX() < 10 || position.getTopLeftCorner().getX() + position.getWidth() > Game::WINDOW_WIDTH - position.getWidth())
 	{
 
-		speed.SetX(speed.getX() * -1);
+		Speed.SetX(Speed.getX() * -1);
 	}
-	position.move(speed * delta);
+	position.move(Speed * delta);
 
 	return true;
 

@@ -1,22 +1,13 @@
 #include "Vidas.h"
-#include "rectangle.h"
 
-Vidas::Vidas(Game* game, int i)
-	: SceneObject(game->getTexture(game->ARROW),
-		Rectangle(Point2D<>(20 + i * 35, 20), 30, 30),
-		game)
+Vidas::Vidas(Texture* tex, Rectangle pos, Game* game) : SceneObject(tex, pos, game)
 {
-	this->ArrowIndex = i;
-}
 
+}
 void Vidas::render() const
 {
-	if (game->getArrows() > ArrowIndex)
-	{
-		SceneObject::render();
-	}
+	texture->renderFrame(position.to_sdl(), 0, 0);
 }
-
 
 bool Vidas::update(float delta)
 {

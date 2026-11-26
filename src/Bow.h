@@ -1,45 +1,45 @@
 #pragma once
-#include "MobileObject.h"
-#include <ostream>
-#include "Bow.h"
+
+#include "vector2D.h"
+#include "rectangle.h"
+#include <SDL3/SDL.h>
+#include "texture.h"
+#include "Arrow.h"
 #include "SceneObject.h"
+#include <fstream>
+
+
+class Game;
 
 class Bow : public SceneObject
 {
 private:
-//variable para almacenar la velocidad del arco (usaremos esto para cambiar la speed de MobileObject
-	int BowSpeed;
-	//Número de flechas
-	int NArrow;
-	//Arco cargado o no
-	bool armed;
-	//Cargando o no la flecha;
-	bool charging;
-    float LoadTime = 0.0f;  // tiempo para cargar la flecha
-	float SpeedArrow = 0.3f; // velocidad predeterminada
-
 	Point2D<> Address; // Direcion a la que me muevo
-	Point2D<> speed; // Velocidad a la que me muevo
+	Point2D<> Speed; // Velocidad a la que me muevo
+	int NArrow;
+	bool armed;
 
-	static constexpr float SpeedMin = 0.1f;
-	static constexpr float SpeedMax = 5.0f;
+	float LoadTime;
+	float SpeedArrow;
 
-	
 public:
 	bool handleEvent(const SDL_Event& event);
-	
-	void render() const;
-	bool update(float delta) override;
-	Point2D<> getMediumPos(); //Consigo la posiciond el arco en la mitad para crear la flecha
-	float GetArrowSpeed() const;
-	void setArrows(int arrows);
-	int getArrows();
 
 	Bow(Rectangle pos, Texture* tex, Point2D<> speed, int NFlechas, bool armado, Point2D<> Address, Game* game);
+
+	void render() const override;
+	bool update(float delta) override;
+
+	Point2D<> getposmed();
+
+	float GetArrowSpeed() const;
+
+	void setArrows(int arrows); // Cambio el numero de flechas que tiene el arco
+
+	Arrow* CrearFlecha(); // Para crear la flecha que le pasaremos al game
+
 	void EscribirDatos(std::ostream& archivo) const override;
+
 	Bow(Game* game, std::istream& archivo, Texture* tex, int linea);
-
-
-	
 };
 

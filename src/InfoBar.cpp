@@ -1,57 +1,97 @@
 #include "InfoBar.h"
-#include "Puntuacion.h"
-#include "Vidas.h"
+#include "InfoBar.h"
 
-InfoBar::InfoBar(Game* game) :GameObject(game)
+InfoBar::InfoBar(Texture* texpunt, Texture* texvidas, Texture* texdance, int flechas, string objetivo, Game* game) : GameObject(game)
 {
 	
-	//Es la flecha menos 1 porque empezamos en 0 
-	for (int i = 0; i < game->getArrows(); i++)
+	for (int i = 0; i < flechas;i++)
 	{
-		
-		v.push_back(new Vidas(game, i));
+		Rectangle pos(Point2D<>(20 + i * 35, 20), 30, 30);
+		Lifes.emplace_back(texvidas, pos, game); //emplate en vez de push back porque con el pushback tengo que crear el objeto y meterselo y esto es directo y me encanta 
 	}
+	for (int i = 0; i < objetivo.size(); i++)
+	{
+		Rectangle pos(Point2D<>(650 + i * 30, 20), 25, 35);
 
-	for (int i = 0 ; i < getDigits();i++)
-	{
-		
-		v.push_back(new Puntuacion(game, i));
+		Point.emplace_back(texpunt, pos, game);
+		Point.back().Change(0); //le meto 0 al principio
 	}
 }
-int InfoBar::getDigits()
+
+
+void InfoBar::EscribirDatos(std::ostream& archivo) const
 {
-	int aux = this->game->getGoal();
-		int i = 0;
-		while (aux != 0)
-		{
-			i++;
-			aux = aux / 10;
-		}
-		return i;
-}
-InfoBar::~InfoBar()
-{
-	for (int i = 0; i < v.size(); i++)
-	{
-		delete v[i];
-	}
+
 }
 bool InfoBar::update(float delta)
 {
-	for (int i = 0; i < v.size(); i++)
-	{
-		v[i]->update(delta);
-	}
+	
 	return true;
+}
+void InfoBar::update(int arrows, Texture* texvidas, float delta, int point)
+{
+	updatepoint(point);
+	while (Lifes.size() < arrows)
+	{
+		int i = Lifes.size();
+		Rectangle pos(Point2D<>(20 + i * 35, 20), 30, 30);
+		Lifes.emplace_back(texvidas, pos, game);
+	}
+
+	while (Lifes.size() > arrows)
+	{
+		Lifes.pop_back();
+	}
+	
 }
 void InfoBar::render() const
 {
-	for (int i = 0; i < v.size(); i++)
+	for (int i = 0; i < Lifes.size();i++)
 	{
-		v[i]->render();
+		Lifes[i].render();
+	}
+	for (int i = 0; i < Point.size();i++)
+	{
+		Point[i].render();
+	}
+	
+}
+
+void InfoBar::updatelife()
+{
+	if (!Lifes.empty())
+	{
+		Lifes.pop_back();
 	}
 }
-void InfoBar::EscribirDatos(std::ostream&) const
+void InfoBar::updatepoint(int point)
 {
+	int numero = point;
+
+	for (int i = Point.size() - 1; i >= 0; i--)
+	{
+		int digito = numero % 10;
+		Point[i].Change(digito);
+		numero /= 10;
+	}
 }
+void InfoBar::PuntosProsimoNivel(string objetive, Texture* texpunt)
+{
+	while (Point.size() < objetive.size())
+	{
+		int i = Point.size();
+		Rectangle pos(Point2D<>(650 + i * 30, 20), 25, 35);
+
+		Point.emplace_back(texpunt, pos, game);
+		Point.back().Change(0);
+	}
+
+	while (Point.size() > objetive.size())
+	{
+		Point.pop_back();
+	}
+
+	updatepoint(0);
+}
+
 

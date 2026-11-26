@@ -1,11 +1,11 @@
 #pragma once
-#include <string>
 #include "GameError.h"
-
+#include <sstream>
 class FileFormatError : public GameError
 {
 public:
-    using GameError::GameError;
-
-    FileFormatError(const std::string& archivo, int line);
+	FileFormatError(string const& filename, int line);
 };
+
+
+

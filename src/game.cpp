@@ -97,8 +97,8 @@ Game::Game()
 	Rectangle rectArco(Point2D<>(100, 100), 100, 100);
 	bow = new Bow(rectArco, getTexture(BOW), Point2D<>(0, 1), arrows, true, Point2D<>(0, 0), this);
 	cont = deltatime = puntuacion = TimeBalloons = 0; // Se que deltatime no lo uso es porque quiero preguntarle algo a Rubén y lo dejo para cuando lo pregunte
-	infoBar = new InfoBar(this);
-	gameobjetc.push_back(infoBar);
+	infoBar = new InfoBar(getTexture(DIGITS), getTexture(ARROW), getTexture(DANCE), arrows, to_string(goal), this);
+	
 
 	GenerarMariposas();
 
@@ -248,7 +248,7 @@ void Game::RevisarMeta()
 			TimeBalloons = 0;
 			bow->setArrows(arrows);
 			
-
+			infoBar->PuntosProsimoNivel(to_string(goal), getTexture(DIGITS));
 			list<SceneObject*>::iterator it = sceneobject.begin();
 
 			while (it != sceneobject.end())
@@ -345,7 +345,7 @@ Game::update()
 {
 
 	StartTime = SDL_GetTicks();
-	infoBar->update(FRAME_PERIOD);
+	infoBar->update(arrows, getTexture(ARROW), FRAME_PERIOD, puntuacion);
 	for (auto it = gameobjetc.begin(); it != gameobjetc.end(); it++)
 	{
 		(*it)->update(FRAME_PERIOD);
@@ -429,6 +429,7 @@ void Game::handleEvents()
 
 		if (bow->handleEvent(event))
 		{
+			infoBar->updatelife();
 			arrows--;
 		}
 	}

@@ -1,13 +1,10 @@
 #pragma once
 #include <stdexcept>
-#include <string>
+
+using namespace std;
 class GameError : public std::logic_error
 {
-	public:
-	//Esto hace que heredemos el constructor del padre directamente
+public:
 	using std::logic_error::logic_error;
-	GameError(const char* what_arg);
-	//const char* what() const noexcept override;
-	
 };
 

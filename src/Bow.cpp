@@ -1,21 +1,22 @@
 #include "Bow.h"
 #include "game.h"
-#include "rectangle.h"
 
-Point2D<> Bow::getMediumPos() // devuelve la posicion del arco para la flecha para crearlo exactamente en el centro
+Point2D<> Bow::getposmed()
 {
-	Point2D<> esqui = position.getTopLeftCorner(); // consigo la esquina
-	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);  // esto hace que se creme justo en la mitad
+	Point2D<> esqui = position.getTopLeftCorner();
 
+	return Point2D<>(esqui.getX() + position.getWidth() / 2, esqui.getY() + position.getHeight() / 2);
 }
+
 void Bow::EscribirDatos(std::ostream& archivo) const
 {
 	archivo << "Bow ";
 	SceneObject::EscribirDatos(archivo);
 
-	archivo << Address.getX() << " " << Address.getY() << " " << speed.getX() << " " << speed.getY() << " " << NArrow << " " << armed << "\n";
+	archivo << Address.getX() << " " << Address.getY() << " " << Speed.getX() << " " << Speed.getY() << " " << NArrow << " " << armed << "\n";
 }
-Bow::Bow(Game* game, std::istream& archivo, Texture* tex, int linea): SceneObject(game, archivo, tex, linea)
+Bow::Bow(Game* game, std::istream& archivo, Texture* tex, int linea)
+	: SceneObject(game, archivo, tex, linea)
 {
 	float x, y, sx, sy;
 	int a, ar;
@@ -28,8 +29,8 @@ Bow::Bow(Game* game, std::istream& archivo, Texture* tex, int linea): SceneObjec
 	Address.SetX(x);
 	Address.SetY(y);
 
-	speed.SetX(sx);
-	speed.SetY(sy);
+	Speed.SetX(sx);
+	Speed.SetY(sy);
 
 	NArrow = a;
 	armed = (ar != 0);
@@ -44,14 +45,63 @@ void Bow::setArrows(int arrows)
 {
 	this->NArrow = arrows;
 }
+Arrow* Bow::CrearFlecha()
+{
 
+	Rectangle rec(getposmed(), 100, 20);
+	return  new Arrow(game, game->getTexture(Game::ARROW), rec, Point2D<>(SpeedArrow, 0));
+
+
+}
+bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
+{
+	float mouseX, mouseY;
+	SDL_MouseButtonFlags flags = SDL_GetMouseState(&mouseX, &mouseY);
+
+	if (event.type == SDL_EVENT_KEY_DOWN)
+	{
+		if (event.key.key == SDLK_UP)
+		{
+			Address.SetY(-Speed.getY());
+		}
+		else if (event.key.key == SDLK_DOWN)
+		{
+			Address.SetY(Speed.getY());
+		}
+		else if (event.key.key == SDLK_LEFT)
+		{
+			if (!armed && NArrow != 0)
+			{
+				armed = true;
+				LoadTime = 0;
+			}
+		}
+		else if (event.key.key == SDLK_RIGHT)
+		{
+			if (armed && NArrow != 0)
+			{
+
+				armed = false;
+				game->addObject(CrearFlecha());
+				NArrow--;
+				return true;
+			}
+		}
+
+	}
+	else if (event.type == SDL_EVENT_KEY_UP)
+	{
+		Address.SetY(0);
+	}
+	return false;
+}
 Bow::Bow(Rectangle pos, Texture* tex, Point2D<> speed, int NFlechas, bool armado, Point2D<> Address, Game* game) :SceneObject(tex, pos, game)
 {
 
 	this->Address = Address;
 	this->NArrow = NFlechas;
 	this->armed = armado;
-	this->speed = speed;
+	this->Speed = speed;
 	LoadTime = 0.0f;
 	SpeedArrow = 0.3f;
 
@@ -61,107 +111,19 @@ void Bow::render() const
 
 	texture->renderFrame(position.to_sdl(), 0, !armed); //usamo armed porque es un bool es decir en verdad es 1 o 0
 }
-bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
-{
-	
-	if (event.type == SDL_EVENT_KEY_DOWN)
-	{
-		//Controlamos si se esta presionando el control para "tensar" el arco
-		charging = event.key.key == SDLK_RCTRL || event.key.mod & SDL_KMOD_CTRL;
-		//Revisamos las teclas
-		if (event.key.key == SDLK_UP)
-		{
-			speed.SetY(-BowSpeed);
-		}
-		else if (event.key.key == SDLK_DOWN)
-		{
-			speed.SetY(BowSpeed);
-		}
-		else if (event.key.key == SDLK_LEFT )
-		{
-			//charging = event.key.mod & SDL_KMOD_CTRL;
-			if (!armed && NArrow != 0)
-			{
-				armed = true; 
-				LoadTime = 0;
-			}
-		}
-		else if (event.key.key == SDLK_RIGHT)
-		{
-			
-			if (armed && NArrow != 0)
-			{
-				if (SpeedArrow > SpeedMax)
-				{
-					SpeedArrow = SpeedMax;
-				}
-				else if (SpeedArrow < SpeedMin)
-				{
-					SpeedArrow = SpeedMin;
-				}
-				NArrow--;
-				armed = false;
-				this->game->addObject(new Arrow(this->game, this->game->getTexture(Game::ARROW), Rectangle(this->getMediumPos(), 40, 10), Point2D<>(SpeedArrow, 0)));
-				
-				return true;
-			}
-		}
-		
-	}
-	else if (event.type == SDL_EVENT_KEY_UP)
-	{
-		if (event.key.key == SDLK_UP || event.key.key == SDLK_DOWN)
-		{
-			speed.SetY(0);
-		}
-
-		if (event.key.key == SDLK_RCTRL)
-		{
-			charging = false;
-		}
-	}
-	return false;
-}
-
-int Bow::getArrows()
-{
-	return NArrow;
-}
-
 bool Bow::update(float delta)
 {
-	this->TextureCol = !armed;
+	constexpr int limit = 600;
 
-	// Ctrl pulsado = tensando el arco (se lee directamente del estado del teclado)
-	charging = (SDL_GetModState() & SDL_KMOD_CTRL) != 0;
+	Rectangle aux = position.moved(Address * delta);//estoy usando moved no move lo que devuelve un rectangulo
 
-	// Carga de la velocidad de la flecha
-	if (armed && charging)
+	float y = aux.getTopLeftCorner().getY();
+
+	if (y >= 0 && y + aux.getHeight() <= limit)
 	{
-		SpeedArrow += delta / 1000;
-		if (SpeedArrow > SpeedMax)
-			SpeedArrow = SpeedMax;
+		position = aux;
 	}
-	else
-	{
-		SpeedArrow = SpeedMin;
-	}
-
-	// Movimiento del arco
-	position.move(Point2D<>(0, speed.getY() * delta));
-
-	// Limites verticales
-	float y = position.getTopLeftCorner().getY();
-
-	if (y < 0)
-	{
-		position.move(Point2D<>(0, -y));
-	}
-	else if (y + position.getHeight() > Game::WINDOW_HEIGHT)
-	{
-		position.move(Point2D<>(0, Game::WINDOW_HEIGHT - y - position.getHeight()));
-	}
-
 	return NArrow != 0;
+
 }
 

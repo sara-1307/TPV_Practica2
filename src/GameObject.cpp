@@ -1,6 +1,9 @@
 #include "GameObject.h"
-//RS
 
+//GameObject::GameObject(Game* game)
+//{
+//	this->game = game; 
+//}
 GameObject::GameObject(Game* game)
 {
 	this->game = game;

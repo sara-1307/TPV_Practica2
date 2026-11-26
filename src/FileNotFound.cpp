@@ -1,3 +1,3 @@
 #include "FileNotFound.h"
 
-FileNotFound::FileNotFound(const std::string& filename) :GameError(("Error, archivo " + filename + " no encontrado").c_str()){}
+FileNotFound::FileNotFound(string const& filename) : GameError("No se ha encontrado el archivo: " + filename) {};

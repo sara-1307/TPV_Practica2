@@ -1,24 +1,15 @@
 #include "MobileObject.h"
-#include <ostream>
-#include "SceneObject.h"
 
-//MobileObject::MobileObject(){}
-bool MobileObject::update(float delta)
+void MobileObject::SobreUpdate()
 {
-	this->MobileObject::position.move(MobileObject::speed * delta);
-	return true;
+
 }
-//void MobileObject::saveObj(std::ostream& output)
-//{
-//	SceneObject::saveObj(output);
-//	output << this->speed.getX() << " " << this->speed.getY() << " ";
-//}
 
 void MobileObject::EscribirDatos(std::ostream& archivo) const
 {
     SceneObject::EscribirDatos(archivo);
 
-    archivo << speed.getX() << " " << speed.getY() << " ";
+    archivo << Speed.getX() << " " << Speed.getY() << " ";
 }
 MobileObject::MobileObject(Game* game, std::istream& archivo,
     Texture* tex, int linea)
@@ -31,11 +22,11 @@ MobileObject::MobileObject(Game* game, std::istream& archivo,
         throw FileFormatError("saved.txt", linea);
     }
 
-    speed.SetX(x);
-    speed.SetY(y);
+    Speed.SetX(x);
+    Speed.SetY(y);
 }
 MobileObject::MobileObject(Point2D<> Speed, Texture* tex, Rectangle rec, Game* game)
-    : SceneObject(tex, rec, game), speed(Speed)
+    : SceneObject(tex, rec, game), Speed(Speed)
 {
 
 }

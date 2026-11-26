@@ -4,4 +4,4 @@ arrows 10
 baldelay 1000
 balpoints 300
 goal 300
-butterfly 1
+butterfly 10

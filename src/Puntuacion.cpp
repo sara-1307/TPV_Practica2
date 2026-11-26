@@ -1,40 +1,28 @@
 #include "Puntuacion.h"
-#include "rectangle.h"
+#include "Puntuacion.h"
 
-
-Puntuacion::Puntuacion(Game* game, int i)
-	: SceneObject(
-		game->getTexture(game->DIGITS),
-		Rectangle(
-			Point2D<>((game->WINDOW_WIDTH - 30) - i * 30, 20),
-			25, 35
-		),
-		game
-	)
+Puntuacion::Puntuacion(Texture* tex, Rectangle pos, Game* game) : SceneObject(tex, pos, game)
 {
-	this->index = i;
+
+	frame = 0;
 }
 void Puntuacion::render() const
 {
-	SceneObject::render();
+	texture->renderFrame(position.to_sdl(), 0, frame);
 }
-int Puntuacion::getDigit()
+
+void Puntuacion::update(int pos)
 {
-	int goal = game->getPoint();
-	int aux = goal % 10;
-	goal = goal / 10;
-	for (int i = 0; i < this->index; i++)
-	{
-		aux = goal % 10;
-		goal = goal / 10;
-	}
-	return aux;
+	Change(pos); //Me parecia muy violento hacer que el update cambiara el fram asi que hice una funcion auxiliar.
 }
 
 bool Puntuacion::update(float delta)
 {
-	this->TextureCol = getDigit();
 	return true;
 }
 
+void Puntuacion::Change(int pos)
+{
+	frame = pos;
+}
 
