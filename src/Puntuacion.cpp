@@ -3,11 +3,16 @@
 
 
 Puntuacion::Puntuacion(Game* game, int i)
+	: SceneObject(
+		game->getTexture(game->DIGITS),
+		Rectangle(
+			Point2D<>((game->WINDOW_WIDTH - 30) - i * 30, 20),
+			25, 35
+		),
+		game
+	)
 {
 	this->index = i;
-	this->game = game;
-	this->position = Rectangle(Point2D<>((game->WINDOW_WIDTH - 30) - i * 30, 20), 25, 35);
-	this->texture = this->game->getTexture(game->DIGITS);	
 }
 void Puntuacion::render() const
 {

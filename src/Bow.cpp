@@ -56,6 +56,11 @@ Bow::Bow(Rectangle pos, Texture* tex, Point2D<> speed, int NFlechas, bool armado
 	SpeedArrow = 0.3f;
 
 }
+void Bow::render() const
+{
+
+	texture->renderFrame(position.to_sdl(), 0, !armed); //usamo armed porque es un bool es decir en verdad es 1 o 0
+}
 bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y dispara el es el que recibe y gestiona el input del jugador
 {
 	
@@ -105,9 +110,15 @@ bool Bow::handleEvent(const SDL_Event& event)  //Como el arco el que se mueve y 
 	}
 	else if (event.type == SDL_EVENT_KEY_UP)
 	{
-		//Frenamos la carga y el arco
-		charging = false;
-		speed.SetY(0);
+		if (event.key.key == SDLK_UP || event.key.key == SDLK_DOWN)
+		{
+			speed.SetY(0);
+		}
+
+		if (event.key.key == SDLK_RCTRL)
+		{
+			charging = false;
+		}
 	}
 	return false;
 }
@@ -116,31 +127,41 @@ int Bow::getArrows()
 {
 	return NArrow;
 }
-bool Bow::update(float delta) 
+
+bool Bow::update(float delta)
 {
-	constexpr int limit = 600;
 	this->TextureCol = !armed;
+
+	// Ctrl pulsado = tensando el arco (se lee directamente del estado del teclado)
+	charging = (SDL_GetModState() & SDL_KMOD_CTRL) != 0;
+
+	// Carga de la velocidad de la flecha
 	if (armed && charging)
 	{
 		SpeedArrow += delta / 1000;
+		if (SpeedArrow > SpeedMax)
+			SpeedArrow = SpeedMax;
 	}
 	else
 	{
 		SpeedArrow = SpeedMin;
-
 	}
-	//Guardamos la posición antes de mover
-	Rectangle aux = this->position;
-	//Movemos con el update del padre
-	
-	//Calculamos si nos salimos de los límites, y si es así volvemos a antes de movernos.
-	float y = this->position.getTopLeftCorner().getY();
-	if (y <= 0 || y > this->game->WINDOW_HEIGHT-50)
+
+	// Movimiento del arco
+	position.move(Point2D<>(0, speed.getY() * delta));
+
+	// Limites verticales
+	float y = position.getTopLeftCorner().getY();
+
+	if (y < 0)
 	{
-		this->position = aux;
+		position.move(Point2D<>(0, -y));
 	}
-
+	else if (y + position.getHeight() > Game::WINDOW_HEIGHT)
+	{
+		position.move(Point2D<>(0, Game::WINDOW_HEIGHT - y - position.getHeight()));
+	}
 
 	return NArrow != 0;
-	
 }
+

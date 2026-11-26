@@ -74,14 +74,22 @@ Game::Game()
 	// Configura que se pueden utilizar capas translúcidas
 	// SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-	if (!(loadLevel((to_string(level) + ".txt"))))
+	try
 	{
-		for (int i = 0; i < textures.size();i++)
+		if (!loadLevel(to_string(level) + ".txt"))
+		{
+			throw FileNotFound(to_string(level) + ".txt");
+		}
+	}
+	catch (const GameError&)
+	{
+		for (int i = 0; i < textures.size(); i++)
 		{
 			delete textures[i];
-
+			textures[i] = nullptr;
 		}
-		throw FileNotFound(to_string(level) + ".txt");
+
+		throw;
 	}
 
 
@@ -149,9 +157,22 @@ void Game::cargar() // Nota para mi Importante como esto son constructoras lo qu
 	{
 		throw FileFormatError("saved.txt", 1);
 	}
-	if (!loadLevel(to_string(nivelGuardado) + ".txt"))
+	try
 	{
-		throw FileNotFound(to_string(nivelGuardado) + ".txt");
+		if (!loadLevel(to_string(level) + ".txt"))
+		{
+			throw FileNotFound(to_string(level) + ".txt");
+		}
+	}
+	catch (const GameError&)
+	{
+		for (int i = 0; i < textures.size(); i++)
+		{
+			delete textures[i];
+			textures[i] = nullptr;
+		}
+
+		throw;
 	}
 	archivo.ignore(numeric_limits<streamsize>::max(), '\n'); // Por los saltos de lineas que se quedaba sin saltar y me estaba dando demasiados problemas 
 	level = nivelGuardado;
@@ -197,6 +218,15 @@ void Game::cargar() // Nota para mi Importante como esto son constructoras lo qu
 		}
 		else
 		{
+			for (auto it = sceneobject.begin(); it != sceneobject.end(); it++)
+			{
+				delete* it;
+				it = sceneobject.erase(it);
+			}
+			if (bow != nullptr)
+			{
+				delete bow; 
+			}
 			throw FileFormatError("saved.txt", linea);
 		}
 	}
@@ -225,6 +255,7 @@ void Game::RevisarMeta()
 			{
 				delete* it;
 				it = sceneobject.erase(it);
+
 			}
 
 			GenerarMariposas();
