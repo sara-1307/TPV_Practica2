@@ -20,7 +20,7 @@ bool Butterfly::hit(const Rectangle& obj)
 	{
 
 		death = true;
-       return true;
+		return false;
 	}
 
 	return false;
@@ -90,7 +90,7 @@ bool Butterfly::update(float delta)
 	}
 
 
-	if (death) // Si me muero para abajo
+	if (death)
 	{
 
 		Speed.SetX(0);
@@ -102,9 +102,9 @@ bool Butterfly::update(float delta)
 			return false;
 		}
 		return true;
-
 	}
-
+	
+	
 
 
 	if (mismadir >= limitdir) // Si ya ha pasado mi tiempo de moverme por esa misma dir me cambio a una dir aleatoria 
